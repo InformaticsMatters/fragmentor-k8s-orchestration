@@ -1,0 +1,13 @@
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: work
+  namespace: {{ fc_namespace }}
+spec:
+  accessModes:
+  - ReadWriteMany
+  storageClassName: '{{ fc_work_volume_storageclass }}'
+  resources:
+    requests:
+      storage: '{{ fc_work_volume_size_g }}Gi'

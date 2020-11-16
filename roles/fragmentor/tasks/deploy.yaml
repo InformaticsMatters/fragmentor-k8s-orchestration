@@ -1,0 +1,126 @@
+---
+
+# Assert the play's been named
+
+- name: Assert play named
+  assert:
+    that: fc_play|string != 'SetMe'
+    fail_msg: You must set 'fc_play'
+
+- name: Assert AWS variables have been set named
+  assert:
+    that:
+    - aws_access_key_id|string|length > 0
+    - aws_secret_access_key|string|length > 0
+    fail_msg: You must provide AWS credentials
+
+# Check the namespace and pgcopy PVC exist
+
+- name: Get namespace ({{ fc_namespace }})
+  k8s_info:
+    kind: Namespace
+    name: "{{ fc_namespace }}"
+  register: ns_result
+
+- name: Assert namespace exists
+  assert:
+    that: ns_result.resources|length == 1
+    fail_msg: The {{ fc_namespace }} namespace does not exist
+
+- name: Get pgcopy pvc ({{ fc_pgcopy_pvc_name }})
+  k8s_info:
+    kind: PersistentVolumeClaim
+    namespace: "{{ fc_namespace }}"
+    name: "{{ fc_pgcopy_pvc_name }}"
+  register: pvc_result
+
+- name: Assert pgcopy pvc exists
+  assert:
+    that: pvc_result.resources|length == 1
+    fail_msg: The pgcopy pvc ({{ fc_pgcopy_pvc_name }}) does not exist
+
+# Create basic materials
+
+# The parameter file is read into a variable here.
+# 'file' replaces new-line instances by '\n' so to
+# reproduce the original content, with line-feeds we '|replace('\n', '\\n')'
+
+- name: Set parameters from file ({{ fc_parameter_file }})
+  set_fact:
+    parameters_fact: "{{ lookup('file', '{{ fc_parameter_file }}') }}"
+
+- name: Create namespace material
+  k8s:
+    definition: "{{ lookup('template', '{{ item }}.yaml.j2') }}"
+    wait: yes
+  loop:
+  - serviceaccount
+  - role
+  - rolebinding-role-sa
+  - limitrange
+  - configmap-nextflow-config
+  - configmap-parameters
+
+# Check storage class exists
+# and create the volume claim
+
+- name: Get {{ fc_work_volume_storageclass }} StorageClass
+  k8s_info:
+    kind: StorageClass
+    name: "{{ fc_work_volume_storageclass }}"
+  register: sc_result
+  when: fc_work_volume_storageclass != " "
+
+- name: Assert {{ fc_work_volume_storageclass }} StorageClass
+  assert:
+    that: sc_result.resources|length == 1
+    fail_msg: The {{ fc_work_volume_storageclass }} StorageClass must be available on the cluster
+  when: fc_work_volume_storageclass != " "
+
+- name: Create work-directory volume claim
+  k8s:
+    definition: "{{ lookup('template', 'pvc.yaml.j2') }}"
+    wait: yes
+    wait_timeout: "{{ wait_timeout }}"
+
+# Delete the Pods left behind that are Completed ('Succeeded').
+# Kubernetes *DOES NOT* remove these Job-based Pods automatically
+# (see https://kubernetes.io/docs/concepts/workloads/controllers/job/).
+# Instead completed Jobs need to be removed manually by the user.
+# The logic that follows list all Jobs (Pods)
+# that have Succeeded and then deletes them.
+
+- name: Get Succeeded Job Pods
+  k8s_info:
+    kind: Pod
+    namespace: "{{ fc_namespace }}"
+    label_selectors:
+    - name=fragmentor-controller
+    field_selectors:
+    - status.phase=Succeeded
+  register: pods_result
+
+- name: Delete Succeeded Job Pods
+  k8s:
+    kind: Pod
+    namespace: "{{ fc_namespace }}"
+    name: "{{ item.metadata.name }}"
+    state: absent
+  loop: "{{ pods_result.resources }}"
+  no_log: yes
+  when: pods_result.resources|length > 0
+
+# Deploy the application...
+
+- name: Remove prior fragmentor Job
+  k8s:
+    definition: "{{ lookup('template', 'job.yaml.j2') }}"
+    state: absent
+    wait: yes
+    wait_timeout: "{{ pod_ready_timeout }}"
+
+- name: Deploy new fragmentor Job
+  k8s:
+    definition: "{{ lookup('template', 'job.yaml.j2') }}"
+    wait: yes
+    wait_timeout: "{{ pod_ready_timeout }}"

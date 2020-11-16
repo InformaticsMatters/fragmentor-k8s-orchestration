@@ -1,0 +1,20 @@
+---
+
+# The Nextflow configuration file
+# placed in the controller-container user's home directory
+# as the file 'nextflow.config'.
+
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: nextflow-config
+  namespace: {{ fc_namespace }}
+data:
+  nextflow.config: |
+    process {
+      container = 'busybox:latest'
+    }
+    k8s {
+        storageClaimName = 'work'
+        storageMountPath = '/work'
+    }

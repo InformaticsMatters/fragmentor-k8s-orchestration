@@ -1,0 +1,102 @@
+---
+kind: Job
+apiVersion: batch/v1
+metadata:
+  name: fragmentor-controller
+  namespace: {{ fc_namespace }}
+spec:
+  template:
+    metadata:
+      labels:
+        name: fragmentor-controller
+    spec:
+      serviceAccountName: fragmentor
+
+      # A 'required'
+      # node selection affinity...
+#      affinity:
+#        nodeAffinity:
+#          requiredDuringSchedulingIgnoredDuringExecution:
+#            nodeSelectorTerms:
+#            - matchExpressions:
+#              - key: informaticsmatters.com/purpose
+#                operator: In
+#                values:
+#                - fragmentor
+
+      containers:
+      - name: fragmentor-controller
+        image: {{ fc_image_name }}:{{ fc_image_tag }}
+{% if fc_image_tag in ['latest', 'stable'] %}
+        imagePullPolicy: Always
+{% else %}
+        imagePullPolicy: IfNotPresent
+{% endif %}
+        # The default termination log (here for clarity)
+        # But also fallback to stdout logs on error
+        # if there is no termination log.
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: FallbackToLogsOnError
+        env:
+        - name: FRAGMENTOR_PLAY
+          value: '{{ fc_play }}'
+        - name: AWS_ACCESS_KEY_ID
+          value: '{{ aws_access_key_id }}'
+        - name: AWS_SECRET_ACCESS_KEY
+          value: '{{ aws_secret_access_key }}'
+{% if fc_image_tag in ['latest', 'stable'] %}
+        # CICD_TRIGGER_ID is variable whose value is used to force
+        # a redeployment of the underlying containers. This is used in
+        # situations where the origin image's tag may not have changed
+        # (e.g. it's 'latest' or 'stable') but a new build is expected to
+        # be available. Without changing something in the container spec
+        # a roll-out will not occur under these conditions.
+        # Here we make sure something always changes!
+        - name: CICD_TRIGGER_ID
+          value: '{{ ansible_date_time.iso8601_micro }}'
+{% endif %}
+        resources:
+          requests:
+            cpu: {{ fc_cpu_request }}
+            memory: {{ fc_mem_request }}
+{% if fc_cpu_limit or fc_mem_limit %}
+          limits:
+{% if fc_cpu_limit %}
+            cpu: {{ fc_cpu_limit }}
+{% endif %}
+{% if fc_mem_limit %}
+            memory: {{ fc_mem_limit }}
+{% endif %}
+{% endif %}
+        volumeMounts:
+        - mountPath: /pgcopy
+          name: pgcopy
+        - mountPath: /work
+          name: work
+        - mountPath: /home/fragmentor/nextflow.config
+          name: nextflow-config
+          subPath: nextflow.config
+          readOnly: true
+        - mountPath: /home/fragmentor/parameters.yaml
+          name: parameters
+          subPath: parameters.yaml
+          readOnly: true
+
+      volumes:
+      - name: pgcopy
+        persistentVolumeClaim:
+          claimName: {{ fc_pgcopy_pvc_name }}
+      - name: work
+        persistentVolumeClaim:
+          claimName: work
+      - name: nextflow-config
+        configMap:
+          name: nextflow-config
+      - name: parameters
+        configMap:
+          name: parameters
+
+      imagePullSecrets:
+      - name: fragmentor
+
+      restartPolicy: Never

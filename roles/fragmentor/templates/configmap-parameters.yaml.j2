@@ -1,0 +1,16 @@
+---
+
+# The playbook parameters.
+# These are 'play-specific' and are mapped into the controller-container
+# user's home directory as the file 'parameters.yaml'. Each playbook expects
+# this file, which defines and controls the play.
+#
+# We have to replace line-feeds in the variable.
+
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: parameters
+  namespace: {{ fc_namespace }}
+data:
+  parameters.yaml: "{{ parameters_fact|replace('\n', '\\n') }}"

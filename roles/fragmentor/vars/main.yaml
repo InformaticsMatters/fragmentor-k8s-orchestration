@@ -1,0 +1,25 @@
+---
+
+# Less commonly application variables -
+# things the user is less-like to want to change (but can).
+# This is here to avoid clutter in 'defaults/main.yaml'
+
+# The application Pod Security Policy (PSP)
+fc_sa_psp: im-core-unrestricted
+
+# Application CPU and Memory requests and limits.
+# Requests are required but limits are not.
+# Set limit to blank ('') to avoid a limit.
+fc_cpu_request: 1000m
+fc_cpu_limit: 0
+fc_mem_request: 4Gi
+fc_mem_limit: 0
+
+# A request for a suitable node, based on node labels.
+# Here we would like nodes labelled 'purpose=application'...
+fc_node_purpose: application
+
+# General variables
+
+wait_timeout: 120
+pod_ready_timeout: 600
