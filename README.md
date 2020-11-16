@@ -1,4 +1,8 @@
 # fragmentor-ansible
+
+[![Build Status](https://travis-ci.com/InformaticsMatters/fragmentor-ansible.svg?branch=master)](https://travis-ci.com/InformaticsMatters/fragmentor-ansible)
+![GitHub tag (latest SemVer)](https://img.shields.io/github/tag/informaticsmatters/fragmentor-ansible)
+
 Ansible playbooks for the execution of [fragmentor] **Stages**.
 
 Before you attempt to execute any fragmentation Stages...
