@@ -3,9 +3,10 @@
 [![Build Status](https://travis-ci.com/InformaticsMatters/fragmentor-ansible.svg?branch=master)](https://travis-ci.com/InformaticsMatters/fragmentor-ansible)
 ![GitHub tag (latest SemVer)](https://img.shields.io/github/tag/informaticsmatters/fragmentor-ansible)
 
-Ansible playbooks for the execution of [fragmentor] **Stages**.
+Ansible playbooks for the Kubernetes-based execution of [fragmentor]
+**Playbooks**.
 
-Before you attempt to execute any fragmentation Stages...
+Before you attempt to execute any fragmentation plays...
 
 1.  You will need a Kubernetes namespace that contains a pre-deployed postgres
     server. You can use the Ansible playbook and role in our [postgresql-ansible]
@@ -14,13 +15,13 @@ Before you attempt to execute any fragmentation Stages...
     (`ReadWriteMany`) for use with **pgcopy** command data - and you'll need
     the name of the PVC. This is expected to be mounted into the database at
     `/pgcopy`.
-3.  The database service is expected to be `postgres`
+3.  The database Kubernetes service is expected to be called `postgres`
 4.  Your cluster must contain nodes with the label
     `informaticsmatters.com/purpose=fragmentor`. The fragmentor control
     container and the launched workflow pods will only run on nodes
     that contain this label.
-5.  You will need Kubernetes credentials
-6.  You will need AWS credentials (for bucket access)
+5.  You will need Kubernetes credentials.
+6.  You will need AWS credentials (for bucket access).
 
 Start from a virtual environment: -
 
