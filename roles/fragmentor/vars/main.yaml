@@ -15,10 +15,6 @@ fc_cpu_limit: 0
 fc_mem_request: 4Gi
 fc_mem_limit: 0
 
-# A request for a suitable node, based on node labels.
-# Here we would like nodes labelled 'purpose=application'...
-fc_node_purpose: application
-
 # General variables
 
 wait_timeout: 120

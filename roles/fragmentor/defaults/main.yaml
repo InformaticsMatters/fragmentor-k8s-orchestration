@@ -24,7 +24,7 @@ fc_work_volume_storageclass: efs
 fc_work_volume_size_g: 1
 
 # Read the content of the parameters file.
-# This wil e injected into the parameter config map.
+# This will be injected into the fragmentor container.
 fc_parameter_file: parameters.yaml
 
 # The pull-secret

@@ -64,9 +64,9 @@ parameters for your play, run it.
     $ PLAY=standardise
     $ ansible-playbook site-fragmentor.yaml -e "fc_play=${PLAY}"
 
-As the fragmentor stages can take a considerable time to run so the the
-playbook you run here does not wait for the result of the stage - you need to
-inspect the control container yourself to chek on the stage's progress.
+As the fragmentor plays can take a considerable time to run the
+playbook you run here does not wait for the result - you need to
+inspect the control Pod yourself to check on the play's progress.
 
 ---
 
