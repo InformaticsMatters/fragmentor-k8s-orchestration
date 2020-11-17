@@ -82,6 +82,11 @@ runpath: /work
 add_backup: no
 vendor: xchem_dsip
 version: v1
+extracts:
+- lib:
+    vendor: xchem_dsip
+    version: v1
+    regenerate_index: yes
 ```
 
 -   Reset fragmentation database
@@ -110,6 +115,48 @@ version: v1
 ```
     $ ansible-playbook site-fragmentor.yaml \
         -e "fp_play=inchi"
+```
+
+-   Extract
+
+```
+    $ ansible-playbook site-fragmentor.yaml \
+        -e "fp_play=extract"
+```
+
+-   Combine
+
+Using a slightly modified parameter file (shown below) you can then combime
+datasets.
+
+```yaml
+---
+database_login_host: postgres
+deployment: production
+runpath: /work
+add_backup: no
+vendor: xchem_dsip
+version: v1
+extracts:
+- lib:
+    path: extract/xchem_dsip/v1
+    data_source: s3
+    bucket: im-fragnet
+    aws_access_key: ?????
+    aws_secret_key: ?????
+- lib:
+    path: extract/xchem_spot/v1
+    data_source: s3
+    bucket: im-fragnet
+    aws_access_key: ?????
+    aws_secret_key: ?????
+path_out: xchem_combi_alan_20201117
+data_source_out: s3
+```
+
+```
+    $ ansible-playbook site-fragmentor.yaml \
+        -e "fp_play=combine"
 ```
 
 ---
