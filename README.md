@@ -71,6 +71,19 @@ playbook you run here does not wait for the result - you need to
 inspect the control Pod yourself to check on the play's progress.
 
 ## Cheat-sheet
+With a parameter like th following (xchem/dsip) you should be
+able to run the standard set of plays.
+
+```yaml
+---
+database_login_host: postgres
+deployment: production
+runpath: /work
+add_backup: no
+vendor: xchem_dsip
+version: v1
+```
+
 -   Reset fragmentation database
 
 ```
@@ -83,6 +96,20 @@ inspect the control Pod yourself to check on the play's progress.
 ```
     $ ansible-playbook site-fragmentor.yaml \
         -e "fp_play=standardise"
+```
+
+-   Fragment
+
+```
+    $ ansible-playbook site-fragmentor.yaml \
+        -e "fp_play=fragment"
+```
+
+-   InChi
+
+```
+    $ ansible-playbook site-fragmentor.yaml \
+        -e "fp_play=inchi"
 ```
 
 ---
