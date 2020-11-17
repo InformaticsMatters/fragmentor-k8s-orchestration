@@ -1,6 +1,6 @@
 # fragmentor-ansible
 
-[![Build Status](https://travis-ci.com/InformaticsMatters/fragmentor-ansible.svg?branch=master)](https://travis-ci.com/InformaticsMatters/fragmentor-ansible)
+[![Build Status](https://travis-ci.com/InformaticsMatters/fragmentor-ansible.svg?branch=main)](https://travis-ci.com/InformaticsMatters/fragmentor-ansible)
 ![GitHub tag (latest SemVer)](https://img.shields.io/github/tag/informaticsmatters/fragmentor-ansible)
 
 Ansible playbooks for the Kubernetes-based execution of [fragmentor]
@@ -64,7 +64,7 @@ parameters for your play, run it.
     $ export AWS_SECRET_ACCESS_KEY=?????
 
     $ PLAY=standardise
-    $ ansible-playbook site-fragmentor.yaml -e "fp_play=${PLAY}"
+    $ ansible-playbook site-fragmentor.yaml -e fp_play=${PLAY}
 
 As the fragmentor plays can take a considerable time to run the
 playbook you run here does not wait for the result - you need to
@@ -93,35 +93,31 @@ extracts:
 
 ```
     $ ansible-playbook site-fragmentor.yaml \
-        -e "fp_play=db-server-configure_create-database"
+        -e fp_play=db-server-configure_create-database
 ```
 
 -   Standardise
 
 ```
-    $ ansible-playbook site-fragmentor.yaml \
-        -e "fp_play=standardise"
+    $ ansible-playbook site-fragmentor.yaml -e fp_play=standardise
 ```
 
 -   Fragment
 
 ```
-    $ ansible-playbook site-fragmentor.yaml \
-        -e "fp_play=fragment"
+    $ ansible-playbook site-fragmentor.yaml -e fp_play=fragment
 ```
 
 -   InChi
 
 ```
-    $ ansible-playbook site-fragmentor.yaml \
-        -e "fp_play=inchi"
+    $ ansible-playbook site-fragmentor.yaml -e fp_play=inchi
 ```
 
 -   Extract
 
 ```
-    $ ansible-playbook site-fragmentor.yaml \
-        -e "fp_play=extract"
+    $ ansible-playbook site-fragmentor.yaml -e fp_play=extract
 ```
 
 -   Combine
@@ -155,8 +151,7 @@ data_source_out: s3
 ```
 
 ```
-    $ ansible-playbook site-fragmentor.yaml \
-        -e "fp_play=combine"
+    $ ansible-playbook site-fragmentor.yaml -e fp_play=combine
 ```
 
 ---
