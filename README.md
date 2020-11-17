@@ -64,7 +64,7 @@ parameters for your play, run it.
     $ export AWS_SECRET_ACCESS_KEY=?????
 
     $ PLAY=standardise
-    $ ansible-playbook site-fragmentor.yaml -e "fc_play=${PLAY}"
+    $ ansible-playbook site-fragmentor.yaml -e "fp_play=${PLAY}"
 
 As the fragmentor plays can take a considerable time to run the
 playbook you run here does not wait for the result - you need to
@@ -75,14 +75,14 @@ inspect the control Pod yourself to check on the play's progress.
 
 ```
     $ ansible-playbook site-fragmentor.yaml \
-        -e "fc_play=db-server-configure_create-database"
+        -e "fp_play=db-server-configure_create-database"
 ```
 
 -   Standardise
 
 ```
     $ ansible-playbook site-fragmentor.yaml \
-        -e "fc_play=standardise"
+        -e "fp_play=standardise"
 ```
 
 ---

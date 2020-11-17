@@ -3,7 +3,7 @@ kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1beta1
 metadata:
   name: fragmentor
-  namespace: {{ fc_namespace }}
+  namespace: {{ fp_namespace }}
 roleRef:
   kind: Role
   name: fragmentor-psp
@@ -11,4 +11,4 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: website
-  namespace: {{ fc_namespace }}
+  namespace: {{ fp_namespace }}

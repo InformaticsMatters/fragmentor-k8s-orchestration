@@ -3,9 +3,9 @@ kind: Role
 apiVersion: rbac.authorization.k8s.io/v1beta1
 metadata:
   name: fragmentor-psp
-  namespace: {{ fc_namespace }}
+  namespace: {{ fp_namespace }}
 rules:
 - apiGroups: ['policy']
   resources: ['podsecuritypolicies']
   verbs: ['use']
-  resourceNames: ['{{ fc_sa_psp }}']
+  resourceNames: ['{{ fp_sa_psp }}']

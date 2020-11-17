@@ -11,6 +11,6 @@ kind: ConfigMap
 apiVersion: v1
 metadata:
   name: parameters
-  namespace: {{ fc_namespace }}
+  namespace: {{ fp_namespace }}
 data:
   parameters.yaml: "{{ parameters_fact|replace('\n', '\\n') }}"

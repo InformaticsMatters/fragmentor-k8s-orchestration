@@ -1,14 +1,13 @@
 ---
 
-# The Nextflow configuration file
-# placed in the player-container user's home directory
-# as the file 'nextflow.config'.
+# The Nextflow configuration file.
+# Rendered as 'config' in '$HOME/.nextflow'
 
 kind: ConfigMap
 apiVersion: v1
 metadata:
   name: nextflow-config
-  namespace: {{ fc_namespace }}
+  namespace: {{ fp_namespace }}
 data:
   config: |
     process {

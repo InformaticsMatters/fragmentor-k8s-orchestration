@@ -4,30 +4,30 @@
 
 - name: Assert play named
   assert:
-    that: fc_play|string != 'SetMe'
-    fail_msg: You must set 'fc_play'
+    that: fp_play|string != 'SetMe'
+    fail_msg: You must set 'fp_play'
 
 # Assert the Kubernetes config has been named and exists
 
 - name: Assert kubernetes configuration file named
   assert:
-    that: fc_kubeconfig_file|string != 'SetMe'
-    fail_msg: You must set 'fc_kubeconfig_file'
+    that: fp_kubeconfig_file|string != 'SetMe'
+    fail_msg: You must set 'fp_kubeconfig_file'
 
 - name: Display kubernetes configuration file name
   debug:
-    var: fc_kubeconfig_file
+    var: fp_kubeconfig_file
 
 - name: Check kubernetes configuration file
   stat:
-    path: "{{ fc_kubeconfig_file }}"
+    path: "{{ fp_kubeconfig_file }}"
   register: file_result
 
 - name: Assert kubernetes configuration file exists
   assert:
     that: file_result.stat.exists
 
-# Assert the Kubernetes config has been named and exists
+# Assert AWS credentials have been defined
 
 - name: Assert AWS variables have been set named
   assert:
@@ -38,30 +38,31 @@
 
 # Check the namespace and pgcopy PVCs exist
 
-- name: Get namespace ({{ fc_namespace }})
+- name: Get namespace ({{ fp_namespace }})
   k8s_info:
     kind: Namespace
-    name: "{{ fc_namespace }}"
+    name: "{{ fp_namespace }}"
   register: ns_result
 
 - name: Assert namespace exists
   assert:
     that: ns_result.resources|length == 1
-    fail_msg: The {{ fc_namespace }} namespace does not exist
+    fail_msg: The {{ fp_namespace }} namespace does not exist
 
-- name: Get pgcopy pvc ({{ fc_pgcopy_pvc_name }})
+- name: Get pgcopy pvc ({{ fp_pgcopy_pvc_name }})
   k8s_info:
     kind: PersistentVolumeClaim
-    namespace: "{{ fc_namespace }}"
-    name: "{{ fc_pgcopy_pvc_name }}"
+    namespace: "{{ fp_namespace }}"
+    name: "{{ fp_pgcopy_pvc_name }}"
   register: pvc_result
 
 - name: Assert pgcopy pvc exists
   assert:
     that: pvc_result.resources|length == 1
-    fail_msg: The pgcopy pvc ({{ fc_pgcopy_pvc_name }}) does not exist
+    fail_msg: The pgcopy pvc ({{ fp_pgcopy_pvc_name }}) does not exist
 
-# Not allowed to run a new 'play' if one is currently running...
+# Not allowed to run a new 'play' if one is currently running.
+#
 # See https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/
 # for a list of possible phases. We want anything that looks like it
 # may not have finished.
@@ -72,7 +73,7 @@
 - name: Get unfinished player Job Pods
   k8s_info:
     kind: Pod
-    namespace: "{{ fc_namespace }}"
+    namespace: "{{ fp_namespace }}"
     label_selectors:
     - name=fragmentor-player
     field_selectors:
@@ -102,7 +103,7 @@
     that: active_pods|length == 0
     fail_msg: A play is still running. You must wait.
 
-# Delete the Pods left behind that are Completed ('Succeeded').
+# Delete the player Pods left behind that are Completed ('Succeeded').
 # Kubernetes *DOES NOT* remove these Job-based Pods automatically
 # (see https://kubernetes.io/docs/concepts/workloads/controllers/job/).
 # Instead completed Jobs need to be removed manually by the user.
@@ -112,7 +113,7 @@
 - name: Get Succeeded Job Pods
   k8s_info:
     kind: Pod
-    namespace: "{{ fc_namespace }}"
+    namespace: "{{ fp_namespace }}"
     label_selectors:
     - name=fragmentor-player
     field_selectors:
@@ -122,7 +123,7 @@
 - name: Delete Succeeded Job Pods
   k8s:
     kind: Pod
-    namespace: "{{ fc_namespace }}"
+    namespace: "{{ fp_namespace }}"
     name: "{{ item.metadata.name }}"
     state: absent
   loop: "{{ pods_result.resources }}"
@@ -132,7 +133,7 @@
 - name: Get Failed Job Pods
   k8s_info:
     kind: Pod
-    namespace: "{{ fc_namespace }}"
+    namespace: "{{ fp_namespace }}"
     label_selectors:
     - name=fragmentor-player
     field_selectors:
@@ -142,7 +143,29 @@
 - name: Delete Failed Job Pods
   k8s:
     kind: Pod
-    namespace: "{{ fc_namespace }}"
+    namespace: "{{ fp_namespace }}"
+    name: "{{ item.metadata.name }}"
+    state: absent
+  loop: "{{ pods_result.resources }}"
+  no_log: yes
+  when: pods_result.resources|length > 0
+
+# Delete nextflow Pods that are Completed ('Succeeded').
+
+- name: Get Succeeded Nextflow Pods
+  k8s_info:
+    kind: Pod
+    namespace: "{{ fp_namespace }}"
+    label_selectors:
+    - app=nextflow
+    field_selectors:
+    - status.phase=Succeeded
+  register: pods_result
+
+- name: Delete Succeeded Nextflow Pods
+  k8s:
+    kind: Pod
+    namespace: "{{ fp_namespace }}"
     name: "{{ item.metadata.name }}"
     state: absent
   loop: "{{ pods_result.resources }}"
@@ -155,13 +178,13 @@
 # 'file' replaces new-line instances by '\n' so to
 # reproduce the original content, with line-feeds we '|replace('\n', '\\n')'
 
-- name: Set parameters from file ({{ fc_parameter_file }})
+- name: Set parameters from file ({{ fp_parameter_file }})
   set_fact:
-    parameters_fact: "{{ lookup('file', '{{ fc_parameter_file }}') }}"
+    parameters_fact: "{{ lookup('file', '{{ fp_parameter_file }}') }}"
 
-- name: Set kubeconfig from file ({{ fc_kubeconfig_file }})
+- name: Set kubeconfig from file ({{ fp_kubeconfig_file }})
   set_fact:
-    kubeconfig_fact: "{{ lookup('file', '{{ fc_kubeconfig_file }}') }}"
+    kubeconfig_fact: "{{ lookup('file', '{{ fp_kubeconfig_file }}') }}"
 
 - name: Create namespace material
   k8s:
@@ -179,18 +202,18 @@
 # Check storage class exists
 # and create the volume claim
 
-- name: Get {{ fc_work_volume_storageclass }} StorageClass
+- name: Get {{ fp_work_volume_storageclass }} StorageClass
   k8s_info:
     kind: StorageClass
-    name: "{{ fc_work_volume_storageclass }}"
+    name: "{{ fp_work_volume_storageclass }}"
   register: sc_result
-  when: fc_work_volume_storageclass != " "
+  when: fp_work_volume_storageclass != " "
 
-- name: Assert {{ fc_work_volume_storageclass }} StorageClass
+- name: Assert {{ fp_work_volume_storageclass }} StorageClass
   assert:
     that: sc_result.resources|length == 1
-    fail_msg: The {{ fc_work_volume_storageclass }} StorageClass must be available on the cluster
-  when: fc_work_volume_storageclass != " "
+    fail_msg: The {{ fp_work_volume_storageclass }} StorageClass must be available on the cluster
+  when: fp_work_volume_storageclass != " "
 
 - name: Create work-directory volume claim
   k8s:

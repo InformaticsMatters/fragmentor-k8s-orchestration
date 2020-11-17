@@ -3,7 +3,7 @@ kind: Job
 apiVersion: batch/v1
 metadata:
   name: fragmentor-player
-  namespace: {{ fc_namespace }}
+  namespace: {{ fp_namespace }}
 spec:
   backoffLimit: 1
   template:
@@ -27,8 +27,8 @@ spec:
 
       containers:
       - name: fragmentor-player
-        image: {{ fc_image_registry }}/{{ fc_image_name }}:{{ fc_image_tag }}
-{% if fc_image_tag in ['latest', 'stable'] %}
+        image: {{ fp_image_registry }}/{{ fp_image_name }}:{{ fp_image_tag }}
+{% if fp_image_tag in ['latest', 'stable'] %}
         imagePullPolicy: Always
 {% else %}
         imagePullPolicy: IfNotPresent
@@ -40,9 +40,9 @@ spec:
         terminationMessagePolicy: FallbackToLogsOnError
         env:
         - name: FRAGMENTOR_PLAY
-          value: '{{ fc_play }}'
+          value: '{{ fp_play }}'
         - name: FRAGMENTOR_NAMESPACE
-          value: '{{ fc_namespace }}'
+          value: '{{ fp_namespace }}'
         - name: AWS_ACCESS_KEY_ID
           value: '{{ aws_access_key_id }}'
         - name: AWS_SECRET_ACCESS_KEY
@@ -50,8 +50,8 @@ spec:
         # The number of seconds to 'sleep' keeping the Pod alive for inspection
         # once the Job is complete. Set to '0' to exit immediately.
         - name: KEEP_ALIVE_SECONDS
-          value: '{{ fc_keep_alive_seconds }}'
-{% if fc_image_tag in ['latest', 'stable'] %}
+          value: '{{ fp_keep_alive_seconds }}'
+{% if fp_image_tag in ['latest', 'stable'] %}
         # CICD_TRIGGER_ID is variable whose value is used to force
         # a redeployment of the underlying containers. This is used in
         # situations where the origin image's tag may not have changed
@@ -64,15 +64,15 @@ spec:
 {% endif %}
         resources:
           requests:
-            cpu: {{ fc_cpu_request }}
-            memory: {{ fc_mem_request }}
-{% if fc_cpu_limit or fc_mem_limit %}
+            cpu: {{ fp_cpu_request }}
+            memory: {{ fp_mem_request }}
+{% if fp_cpu_limit or fp_mem_limit %}
           limits:
-{% if fc_cpu_limit %}
-            cpu: {{ fc_cpu_limit }}
+{% if fp_cpu_limit %}
+            cpu: {{ fp_cpu_limit }}
 {% endif %}
-{% if fc_mem_limit %}
-            memory: {{ fc_mem_limit }}
+{% if fp_mem_limit %}
+            memory: {{ fp_mem_limit }}
 {% endif %}
 {% endif %}
         volumeMounts:
@@ -93,7 +93,7 @@ spec:
       volumes:
       - name: pgcopy
         persistentVolumeClaim:
-          claimName: {{ fc_pgcopy_pvc_name }}
+          claimName: {{ fp_pgcopy_pvc_name }}
       - name: work
         persistentVolumeClaim:
           claimName: work
@@ -106,8 +106,5 @@ spec:
       - name: kubeconfig
         configMap:
           name: kubeconfig
-
-      imagePullSecrets:
-      - name: fragmentor
 
       restartPolicy: Never

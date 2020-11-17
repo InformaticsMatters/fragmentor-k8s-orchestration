@@ -5,19 +5,19 @@
 # This is here to avoid clutter in 'defaults/main.yaml'
 
 # The application Pod Security Policy (PSP)
-fc_sa_psp: im-core-unrestricted
+fp_sa_psp: im-core-unrestricted
 
 # Application CPU and Memory requests and limits.
 # Requests are required but limits are not.
 # Set limit to blank ('') to avoid a limit.
-fc_cpu_request: 1000m
-fc_cpu_limit: 0
-fc_mem_request: 4Gi
-fc_mem_limit: 0
+fp_cpu_request: 1000m
+fp_cpu_limit: 0
+fp_mem_request: 4Gi
+fp_mem_limit: 0
 
 # How long to hold-on to the player Pod
 # (keep alive for post-run debug)
-fc_keep_alive_seconds: 0
+fp_keep_alive_seconds: 0
 
 # General variables
 
