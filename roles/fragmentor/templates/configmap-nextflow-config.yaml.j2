@@ -13,6 +13,7 @@ data:
     process {
       container = 'busybox:latest'
       executor = 'k8s'
+      pod = [nodeSelector: 'informaticsmatters.com/purpose=fragmentor']
     }
     k8s {
         serviceAccount = 'fragmentor'
