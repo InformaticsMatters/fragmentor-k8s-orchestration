@@ -15,6 +15,10 @@ fc_cpu_limit: 0
 fc_mem_request: 4Gi
 fc_mem_limit: 0
 
+# How long to hold-on to the player Pod
+# (keep alive for post-run debug)
+fc_keep_alive_seconds: 0
+
 # General variables
 
 wait_timeout: 120

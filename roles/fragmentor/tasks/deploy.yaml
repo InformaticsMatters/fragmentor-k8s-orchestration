@@ -7,6 +7,28 @@
     that: fc_play|string != 'SetMe'
     fail_msg: You must set 'fc_play'
 
+# Assert the Kubernetes config has been named and exists
+
+- name: Assert kubernetes configuration file named
+  assert:
+    that: fc_kubeconfig_file|string != 'SetMe'
+    fail_msg: You must set 'fc_kubeconfig_file'
+
+- name: Display kubernetes configuration file name
+  debug:
+    var: fc_kubeconfig_file
+
+- name: Check kubernetes configuration file
+  stat:
+    path: "{{ fc_kubeconfig_file }}"
+  register: file_result
+
+- name: Assert kubernetes configuration file exists
+  assert:
+    that: file_result.stat.exists
+
+# Assert the Kubernetes config has been named and exists
+
 - name: Assert AWS variables have been set named
   assert:
     that:
@@ -14,7 +36,7 @@
     - aws_secret_access_key|string|length > 0
     fail_msg: You must provide AWS credentials
 
-# Check the namespace and pgcopy PVC exist
+# Check the namespace and pgcopy PVCs exist
 
 - name: Get namespace ({{ fc_namespace }})
   k8s_info:
@@ -39,6 +61,94 @@
     that: pvc_result.resources|length == 1
     fail_msg: The pgcopy pvc ({{ fc_pgcopy_pvc_name }}) does not exist
 
+# Not allowed to run a new 'play' if one is currently running...
+# See https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/
+# for a list of possible phases. We want anything that looks like it
+# may not have finished.
+#
+# Sadly field selectors use logical AND so we need
+# to ask a number of questions...
+
+- name: Get unfinished player Job Pods
+  k8s_info:
+    kind: Pod
+    namespace: "{{ fc_namespace }}"
+    label_selectors:
+    - name=fragmentor-player
+    field_selectors:
+    - status.phase={{ item }}
+  loop:
+  - Pending
+  - Running
+  - Unknown
+  register: pods_result
+
+- name: Collect names of all player Job Pods not complete
+  set_fact:
+    active_pods: "{{ pods_result|json_query('results[*].resources[*].metadata.name')|flatten }}"
+
+- name: Display collected Pod results
+  debug:
+    var: pods_result
+  when: active_pods|length > 0
+
+- name: Display incomplete player Job Pod nmaes
+  debug:
+    var: active_pods
+  when: active_pods|length > 0
+
+- name: Assert no incomplete player Job Pods
+  assert:
+    that: active_pods|length == 0
+    fail_msg: A play is still running. You must wait.
+
+# Delete the Pods left behind that are Completed ('Succeeded').
+# Kubernetes *DOES NOT* remove these Job-based Pods automatically
+# (see https://kubernetes.io/docs/concepts/workloads/controllers/job/).
+# Instead completed Jobs need to be removed manually by the user.
+# The logic that follows list all Jobs (Pods)
+# that have Succeeded and then deletes them.
+
+- name: Get Succeeded Job Pods
+  k8s_info:
+    kind: Pod
+    namespace: "{{ fc_namespace }}"
+    label_selectors:
+    - name=fragmentor-player
+    field_selectors:
+    - status.phase=Succeeded
+  register: pods_result
+
+- name: Delete Succeeded Job Pods
+  k8s:
+    kind: Pod
+    namespace: "{{ fc_namespace }}"
+    name: "{{ item.metadata.name }}"
+    state: absent
+  loop: "{{ pods_result.resources }}"
+  no_log: yes
+  when: pods_result.resources|length > 0
+
+- name: Get Failed Job Pods
+  k8s_info:
+    kind: Pod
+    namespace: "{{ fc_namespace }}"
+    label_selectors:
+    - name=fragmentor-player
+    field_selectors:
+    - status.phase=Failed
+  register: pods_result
+
+- name: Delete Failed Job Pods
+  k8s:
+    kind: Pod
+    namespace: "{{ fc_namespace }}"
+    name: "{{ item.metadata.name }}"
+    state: absent
+  loop: "{{ pods_result.resources }}"
+  no_log: yes
+  when: pods_result.resources|length > 0
+
 # Create basic materials
 
 # The parameter file is read into a variable here.
@@ -48,6 +158,10 @@
 - name: Set parameters from file ({{ fc_parameter_file }})
   set_fact:
     parameters_fact: "{{ lookup('file', '{{ fc_parameter_file }}') }}"
+
+- name: Set kubeconfig from file ({{ fc_kubeconfig_file }})
+  set_fact:
+    kubeconfig_fact: "{{ lookup('file', '{{ fc_kubeconfig_file }}') }}"
 
 - name: Create namespace material
   k8s:
@@ -60,6 +174,7 @@
   - limitrange
   - configmap-nextflow-config
   - configmap-parameters
+  - configmap-kubeconfig
 
 # Check storage class exists
 # and create the volume claim
@@ -82,33 +197,6 @@
     definition: "{{ lookup('template', 'pvc.yaml.j2') }}"
     wait: yes
     wait_timeout: "{{ wait_timeout }}"
-
-# Delete the Pods left behind that are Completed ('Succeeded').
-# Kubernetes *DOES NOT* remove these Job-based Pods automatically
-# (see https://kubernetes.io/docs/concepts/workloads/controllers/job/).
-# Instead completed Jobs need to be removed manually by the user.
-# The logic that follows list all Jobs (Pods)
-# that have Succeeded and then deletes them.
-
-- name: Get Succeeded Job Pods
-  k8s_info:
-    kind: Pod
-    namespace: "{{ fc_namespace }}"
-    label_selectors:
-    - name=fragmentor-controller
-    field_selectors:
-    - status.phase=Succeeded
-  register: pods_result
-
-- name: Delete Succeeded Job Pods
-  k8s:
-    kind: Pod
-    namespace: "{{ fc_namespace }}"
-    name: "{{ item.metadata.name }}"
-    state: absent
-  loop: "{{ pods_result.resources }}"
-  no_log: yes
-  when: pods_result.resources|length > 0
 
 # Deploy the application...
 

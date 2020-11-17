@@ -1,7 +1,7 @@
 ---
 
 # The Nextflow configuration file
-# placed in the controller-container user's home directory
+# placed in the player-container user's home directory
 # as the file 'nextflow.config'.
 
 kind: ConfigMap
@@ -10,11 +10,13 @@ metadata:
   name: nextflow-config
   namespace: {{ fc_namespace }}
 data:
-  nextflow.config: |
+  config: |
     process {
       container = 'busybox:latest'
+      executor = 'k8s'
     }
     k8s {
+        serviceAccount = 'fragmentor'
         storageClaimName = 'work'
         storageMountPath = '/work'
     }

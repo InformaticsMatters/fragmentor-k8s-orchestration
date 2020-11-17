@@ -20,7 +20,7 @@ Before you attempt to execute any fragmentation plays...
     `informaticsmatters.com/purpose=fragmentor`. The fragmentor control
     container and the launched workflow pods will only run on nodes
     that contain this label.
-5.  You will need Kubernetes credentials.
+5.  You will need your Kubernetes config file.
 6.  You will need AWS credentials (for bucket access).
 
 Start from a virtual environment: -
@@ -58,6 +58,8 @@ parameters for your play, run it.
     $ export K8S_AUTH_API_KEY=?????
     $ export K8S_AUTH_VERIFY_SSL=no
 
+    $ export KUBECONFIG=~/.kube/config
+
     $ export AWS_ACCESS_KEY_ID=?????
     $ export AWS_SECRET_ACCESS_KEY=?????
 
@@ -67,6 +69,21 @@ parameters for your play, run it.
 As the fragmentor plays can take a considerable time to run the
 playbook you run here does not wait for the result - you need to
 inspect the control Pod yourself to check on the play's progress.
+
+## Cheat-sheet
+-   Reset fragmentation database
+
+```
+    $ ansible-playbook site-fragmentor.yaml \
+        -e "fc_play=db-server-configure_create-database"
+```
+
+-   Standardise
+
+```
+    $ ansible-playbook site-fragmentor.yaml \
+        -e "fc_play=standardise"
+```
 
 ---
 

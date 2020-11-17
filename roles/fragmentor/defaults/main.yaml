@@ -4,18 +4,24 @@
 # everything we expect the user to consider changing.
 # To avoid clutter, put less-common variables in 'vars/main.yaml'
 
-# The controller playbook to run.
+# The player's playbook to run.
 fc_play: SetMe
+
+# The user's kubernetes configuration file.
+# The user must set KUBECONFIG - we do not assume ~/.kube/config
+fc_kubeconfig_file: "{{ lookup('env', 'KUBECONFIG') }}"
 
 # The namespace that is expected to exist.
 fc_namespace: fragmentor
+
 # The name of the 'pgcopy' volume (that we can mount).
 # It's also mounted into the database (at `/pgcopy`).
 # This PVC must exist and must be of the type `ReadWriteMany`.
 fc_pgcopy_pvc_name: pgcopy
 
-# Details of the fragmentation controller container image
-fc_image_name: alanbchristie/fragmentor-controller
+# Details of the fragmentation player container image
+fc_image_registry: docker.io
+fc_image_name: alanbchristie/fragmentor-player
 fc_image_tag: 'latest'
 
 # The 'work' volume.
@@ -29,8 +35,3 @@ fc_parameter_file: parameters.yaml
 
 # The pull-secret
 fc_pull_secret: '00000000'
-
-# AWS credentials (for bucket access).
-# Expected in the environment.
-aws_access_key_id: "{{ lookup('env', 'AWS_ACCESS_KEY_ID') }}"
-aws_secret_access_key: "{{ lookup('env', 'AWS_SECRET_ACCESS_KEY') }}"

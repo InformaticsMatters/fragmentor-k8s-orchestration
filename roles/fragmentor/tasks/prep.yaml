@@ -27,3 +27,12 @@
   set_fact:
     k8s_auth_host: "{{ lookup('env', 'K8S_AUTH_HOST') }}"
     k8s_auth_api_key: "{{ lookup('env', 'K8S_AUTH_API_KEY') }}"
+
+# AWS credentials (for bucket access) -----------------------------------------
+
+# Expected in the environment...
+
+- name: Set AWS authentication facts
+  set_fact:
+    aws_access_key_id: "{{ lookup('env', 'AWS_ACCESS_KEY_ID') }}"
+    aws_secret_access_key: "{{ lookup('env', 'AWS_SECRET_ACCESS_KEY') }}"

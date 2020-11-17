@@ -2,13 +2,14 @@
 kind: Job
 apiVersion: batch/v1
 metadata:
-  name: fragmentor-controller
+  name: fragmentor-player
   namespace: {{ fc_namespace }}
 spec:
+  backoffLimit: 1
   template:
     metadata:
       labels:
-        name: fragmentor-controller
+        name: fragmentor-player
     spec:
       serviceAccountName: fragmentor
 
@@ -25,8 +26,8 @@ spec:
 #                - fragmentor
 
       containers:
-      - name: fragmentor-controller
-        image: {{ fc_image_name }}:{{ fc_image_tag }}
+      - name: fragmentor-player
+        image: {{ fc_image_registry }}/{{ fc_image_name }}:{{ fc_image_tag }}
 {% if fc_image_tag in ['latest', 'stable'] %}
         imagePullPolicy: Always
 {% else %}
@@ -40,10 +41,16 @@ spec:
         env:
         - name: FRAGMENTOR_PLAY
           value: '{{ fc_play }}'
+        - name: FRAGMENTOR_NAMESPACE
+          value: '{{ fc_namespace }}'
         - name: AWS_ACCESS_KEY_ID
           value: '{{ aws_access_key_id }}'
         - name: AWS_SECRET_ACCESS_KEY
           value: '{{ aws_secret_access_key }}'
+        # The number of seconds to 'sleep' keeping the Pod alive for inspection
+        # once the Job is complete. Set to '0' to exit immediately.
+        - name: KEEP_ALIVE_SECONDS
+          value: '{{ fc_keep_alive_seconds }}'
 {% if fc_image_tag in ['latest', 'stable'] %}
         # CICD_TRIGGER_ID is variable whose value is used to force
         # a redeployment of the underlying containers. This is used in
@@ -69,18 +76,19 @@ spec:
 {% endif %}
 {% endif %}
         volumeMounts:
-        - mountPath: /pgcopy
-          name: pgcopy
-        - mountPath: /work
-          name: work
-        - mountPath: /home/fragmentor/nextflow.config
-          name: nextflow-config
-          subPath: nextflow.config
-          readOnly: true
-        - mountPath: /home/fragmentor/parameters.yaml
-          name: parameters
+        - name: pgcopy
+          mountPath: /pgcopy
+        - name: work
+          mountPath: /work
+        - name: nextflow-config
+          mountPath: /home/fragmentor/.nextflow/config
+          subPath: config
+        - name: parameters
+          mountPath: /home/fragmentor/parameters.yaml
           subPath: parameters.yaml
-          readOnly: true
+        - name: kubeconfig
+          mountPath: /home/fragmentor/.kube/config
+          subPath: config
 
       volumes:
       - name: pgcopy
@@ -95,6 +103,9 @@ spec:
       - name: parameters
         configMap:
           name: parameters
+      - name: kubeconfig
+        configMap:
+          name: kubeconfig
 
       imagePullSecrets:
       - name: fragmentor
