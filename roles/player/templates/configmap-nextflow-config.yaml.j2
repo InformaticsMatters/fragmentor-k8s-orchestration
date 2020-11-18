@@ -11,7 +11,6 @@ metadata:
 data:
   config: |
     process {
-      container = 'busybox:latest'
       executor = 'k8s'
 {% if all_image_preset_pullsecret_name|string|length > 0 %}
       pod = [nodeSelector: 'informaticsmatters.com/purpose=fragmentor', imagePullSecret: '{{ all_image_preset_pullsecret_name }}']
