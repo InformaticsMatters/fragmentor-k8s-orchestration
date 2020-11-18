@@ -13,13 +13,14 @@ spec:
     spec:
       serviceAccountName: fragmentor
 
-      # A 'required'
+      # A 'request' (not guaranteed)
       # node selection affinity...
       affinity:
         nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-            - matchExpressions:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            preference:
+              matchExpressions:
               - key: informaticsmatters.com/purpose
                 operator: In
                 values:
