@@ -6,7 +6,7 @@ yaml-files:
 - '.yamllint'
 
 ignore: |
-  roles/fragmentor/templates/job.yaml.j2
+  roles/player/templates/job.yaml.j2
 
 rules:
   indentation:

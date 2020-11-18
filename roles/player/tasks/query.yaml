@@ -1,0 +1,154 @@
+---
+
+# A series of tasks that simply queries the fragmentor namespace player
+# issuing a final message like "The player has finished (SUCCESSFULLY)".
+#
+# The player phase will be one of: -
+#
+#   Pending
+#   Running
+#   Failed
+#   Succeeded
+#   Unknown
+#
+# See https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/
+
+# Check Running
+
+- name: Check Running player Job Pods
+  k8s_info:
+    kind: Pod
+    namespace: "{{ fp_namespace }}"
+    label_selectors:
+    - name=fragmentor-player
+    field_selectors:
+    - status.phase=Running
+  register: pod_result
+  when: query_message is undefined
+
+- name: Collect name of Running player Job Pods
+  set_fact:
+    running_pod: "{{ pod_result|json_query('resources[0].metadata.name') }}"
+  when:
+  - query_message is undefined
+  - pod_result.resources|length > 0
+
+- name: Set Running facts
+  set_fact:
+    query_message: "is running"
+  when:
+  - query_message is undefined
+  - running_pod is defined
+
+# Check Succeeded
+
+- name: Check Succeeded player Job Pods
+  k8s_info:
+    kind: Pod
+    namespace: "{{ fp_namespace }}"
+    label_selectors:
+    - name=fragmentor-player
+    field_selectors:
+    - status.phase=Succeeded
+  register: pod_result
+  when: query_message is undefined
+
+- name: Collect name of Succeeded player Job Pods
+  set_fact:
+    finished_pod: "{{ pod_result|json_query('resources[0].metadata.name') }}"
+  when:
+  - query_message is undefined
+  - pod_result.resources|length > 0
+
+- name: Set Succeeded facts
+  set_fact:
+    query_message: "has finished (SUCCESSFULLY)"
+  when:
+  - query_message is undefined
+  - finished_pod is defined
+
+# Check Failed
+
+- name: Check Failed player Job Pods
+  k8s_info:
+    kind: Pod
+    namespace: "{{ fp_namespace }}"
+    label_selectors:
+    - name=fragmentor-player
+    field_selectors:
+    - status.phase=Failed
+  register: pod_result
+  when: query_message is undefined
+
+- name: Collect name of Failed player Job Pods
+  set_fact:
+    failed_pod: "{{ pod_result|json_query('resources[0].metadata.name') }}"
+  when:
+  - query_message is undefined
+  - pod_result.resources|length > 0
+
+- name: Set Failed facts
+  set_fact:
+    query_message: "has finished (FAILED)"
+  when:
+  - query_message is undefined
+  - failed_pod is defined
+
+# Check Pending
+
+- name: Check Pending player Job Pods
+  k8s_info:
+    kind: Pod
+    namespace: "{{ fp_namespace }}"
+    label_selectors:
+    - name=fragmentor-player
+    field_selectors:
+    - status.phase=Pending
+  register: pod_result
+
+- name: Collect name of Pending player Job Pods
+  set_fact:
+    pending_pod: "{{ pod_result|json_query('resources[0].metadata.name') }}"
+  when: pod_result.resources|length > 0
+
+- name: Set Pending facts
+  set_fact:
+    query_message: "is trying to start (Pending)"
+  when: pending_pod is defined
+
+# Check Unknown
+
+- name: Check Unknown player Job Pods
+  k8s_info:
+    kind: Pod
+    namespace: "{{ fp_namespace }}"
+    label_selectors:
+    - name=fragmentor-player
+    field_selectors:
+    - status.phase=Unknown
+  register: pod_result
+  when: query_message is undefined
+
+- name: Collect name of Unknown player Job Pods
+  set_fact:
+    unkown_pod: "{{ pod_result|json_query('resources[0].metadata.name') }}"
+  when:
+  - query_message is undefined
+  - pod_result.resources|length > 0
+
+- name: Set Unknown facts
+  set_fact:
+    query_message: "state is Unknown"
+  when:
+  - query_message is undefined
+  - failed_pod is defined
+
+# Now print the summery message.
+
+- name: Assert query message
+  assert:
+    that: query_message is defined
+
+- name: Display query message
+  debug:
+    msg: The player {{ query_message }}
