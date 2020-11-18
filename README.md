@@ -89,38 +89,42 @@ extracts:
     regenerate_index: yes
 ```
 
--   Reset fragmentation database
+-   **Reset fragmentation database**
+
+>   You only really need to do this once,
+    at the very start of fragment processing. It formats the database
+    by adding key tables and seeds with key records.
 
 ```
     $ ansible-playbook site-fragmentor.yaml \
         -e fp_play=db-server-configure_create-database
 ```
 
--   Standardise
+-   **Standardise**
 
 ```
     $ ansible-playbook site-fragmentor.yaml -e fp_play=standardise
 ```
 
--   Fragment
+-   **Fragment**
 
 ```
     $ ansible-playbook site-fragmentor.yaml -e fp_play=fragment
 ```
 
--   InChi
+-   **InChi**
 
 ```
     $ ansible-playbook site-fragmentor.yaml -e fp_play=inchi
 ```
 
--   Extract
+-   **Extract** (a dataset to graph CSV)
 
 ```
     $ ansible-playbook site-fragmentor.yaml -e fp_play=extract
 ```
 
--   Combine
+-   **Combine** (multiple datasets to graph CSV)
 
 Using a slightly modified parameter file (shown below) you can then combime
 datasets.
