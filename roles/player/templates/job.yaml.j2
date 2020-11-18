@@ -26,6 +26,11 @@ spec:
                 values:
                 - fragmentor
 
+{% if all_image_preset_pullsecret_name|string|length > 0 %}
+      imagePullSecrets:
+      - name: {{ all_image_preset_pullsecret_name }}
+{% endif %}
+
       containers:
       - name: fragmentor-player
         image: {{ fp_image_registry }}/{{ fp_image_name }}:{{ fp_image_tag }}
