@@ -27,9 +27,11 @@ Before you attempt to execute any fragmentation plays...
     called `postgres`
 7.  Your cluster must contain nodes with the label
     `informaticsmatters.com/purpose=fragmentor`. The fragmentor (Nextflow)
-    containers will only run on nodes that contain this label.
-8.  You will need an AWS bucket that holds your origin molecule data
-    and for the delivery of the extracted fragmentation/graph data.
+    containers will only run on nodes that contain this label. Each fragmentor
+    nodes must have at least 4 cores and 8Gi RAM.
+8.  You will need an AWS bucket that holds your vendor molecule data.
+    This bucket will also be used for the delivery of the extracted
+    fragmentation/graph data.
 9.  You will need your Kubernetes config file.
 10. You will need AWS credentials (that allow for bucket access).
 
@@ -85,7 +87,7 @@ A _player_ Pod (implemented in the [fragmentor] repository) uses a series of
 Ansible playbooks to: -
 
 -   **standardise**
--   **fragement**
+-   **fragment**
 -   **inchi**
 -   **extract**
 -   **combine**
