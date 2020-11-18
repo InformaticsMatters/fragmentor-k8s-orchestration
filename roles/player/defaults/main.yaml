@@ -31,7 +31,7 @@ fp_parameter_file: parameters.yaml
 # Details of the fragmentation player container image
 fp_image_registry: docker.io
 fp_image_name: alanbchristie/fragmentor-player
-fp_image_tag: 'latest'
+fp_image_tag: '1.0.0'
 
 # All Image PUll Secret -------------------------------------------------------
 
