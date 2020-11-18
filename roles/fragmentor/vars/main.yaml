@@ -10,10 +10,10 @@ fp_sa_psp: im-core-unrestricted
 # Application CPU and Memory requests and limits.
 # Requests are required but limits are not.
 # Set limit to blank ('') to avoid a limit.
-fp_cpu_request: 1000m
-fp_cpu_limit: 0
+fp_cpu_request: 1
+fp_cpu_limit: 2
 fp_mem_request: 4Gi
-fp_mem_limit: 0
+fp_mem_limit: 4Gi
 
 # How long to hold-on to the player Pod
 # (keep alive for post-run debug)
