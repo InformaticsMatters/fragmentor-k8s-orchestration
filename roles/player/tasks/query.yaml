@@ -36,6 +36,7 @@
 - name: Set Running facts
   set_fact:
     query_message: "is running"
+    query_pod_result: "{{ pod_result }}"
   when:
   - query_message is undefined
   - running_pod is defined
@@ -63,6 +64,7 @@
 - name: Set Succeeded facts
   set_fact:
     query_message: "has finished (SUCCESSFULLY)"
+    query_pod_result: "{{ pod_result }}"
   when:
   - query_message is undefined
   - finished_pod is defined
@@ -90,6 +92,7 @@
 - name: Set Failed facts
   set_fact:
     query_message: "has finished (FAILED)"
+    query_pod_result: "{{ pod_result }}"
   when:
   - query_message is undefined
   - failed_pod is defined
@@ -114,6 +117,7 @@
 - name: Set Pending facts
   set_fact:
     query_message: "is trying to start (Pending)"
+    query_pod_result: "{{ pod_result }}"
   when: pending_pod is defined
 
 # Check Unknown
@@ -139,6 +143,7 @@
 - name: Set Unknown facts
   set_fact:
     query_message: "state is Unknown"
+    query_pod_result: "{{ pod_result }}"
   when:
   - query_message is undefined
   - failed_pod is defined
@@ -149,6 +154,12 @@
   assert:
     that: query_message is defined
 
+- name: Get playbook name
+  set_fact:
+    query_play: "{{ query_pod_result|json_query(query)|flatten }}"
+  vars:
+    query: "resources[0].spec.containers[0].env[?name=='FRAGMENTOR_PLAY'].value"
+
 - name: Display query message
   debug:
-    msg: The player {{ query_message }}
+    msg: The '{{ query_play[0] }}' play {{ query_message }}
