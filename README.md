@@ -19,17 +19,19 @@ Before you attempt to execute any fragmentation plays...
     (`ReadWriteMany`) for use with **pgcopy** command data - and you'll need
     the name of the PVC. This is expected to be mounted into the database at
     `/pgcopy`.
-4.  The database server needs a user (`fragmentor`) with SUPERUSER privilege
+4.  You will need at least 10 spare cores available and 8Gi of RAM in the
+    cluster to satisfy the needs of the database and player Pods.
+5.  The database server needs a user (`fragmentor`) with SUPERUSER privilege
     and a database (`fairmolecules`)
-5.  The database service is expected to be exposed by a **Service**
+6.  The database service is expected to be exposed by a **Service**
     called `postgres`
-6.  Your cluster must contain nodes with the label
+7.  Your cluster must contain nodes with the label
     `informaticsmatters.com/purpose=fragmentor`. The fragmentor (Nextflow)
     containers will only run on nodes that contain this label.
-7.  You will need an AWS bucket that holds your origin molecule data
+8.  You will need an AWS bucket that holds your origin molecule data
     and for the delivery of the extracted fragmentation/graph data.
-8.  You will need your Kubernetes config file.
-9.  You will need AWS credentials (that allow for bucket access).
+9.  You will need your Kubernetes config file.
+10. You will need AWS credentials (that allow for bucket access).
 
 ## Kubernetes namespace setup
 You can conveniently create the required namespace and database using our
@@ -61,9 +63,9 @@ pg_copy_vol_size_g: 5
 pg_copy_vol_storageclass: efs
 pg_vol_size_g: 5
 pg_vol_storageclass: gp2
-pg_cpu_request: 1
-pg_cpu_limit: 2
-pg_mem_request: 500Mi
+pg_cpu_request: 4
+pg_cpu_limit: 8
+pg_mem_request: 2Gi
 pg_mem_limit: 4Gi
 ```
 
@@ -142,6 +144,12 @@ extracts:
     vendor: xchem_dsip
     version: v1
     regenerate_index: yes
+hardware:
+  production:
+    parallel_jobs: 8
+    cluster_cores: 8
+    sort_memory: 4GB
+    postgres_jobs: 8
 ```
 
 -   **Reset fragmentation database**
@@ -207,6 +215,12 @@ extracts:
     aws_secret_key: ?????
 path_out: xchem_combi_alan_20201117
 data_source_out: s3
+hardware:
+  production:
+    parallel_jobs: 8
+    cluster_cores: 8
+    sort_memory: 4GB
+    postgres_jobs: 8
 ```
 
 ```
