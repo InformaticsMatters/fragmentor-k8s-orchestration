@@ -39,5 +39,5 @@ fp_image_tag: '1.0.0'
 # If you need a pull secret to pull the images you must create it
 # in the fragmentor namespace and provide the name of it in this variable.
 #
-# This secret muts apply to all images the fragmentor wil need.
+# This secret must apply to all images the fragmentor wil need.
 all_image_preset_pullsecret_name: ''

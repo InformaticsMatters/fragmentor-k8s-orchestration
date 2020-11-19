@@ -71,7 +71,7 @@ pg_mem_request: 2Gi
 pg_mem_limit: 4Gi
 ```
 
- You will, of course, need to supply our AWX-like Kubernetes variables: -
+You will need to set a few Kubernetes variables...
 
     $ export K8S_AUTH_HOST=https://example.com
     $ export K8S_AUTH_API_KEY=1234
@@ -82,9 +82,9 @@ Before running the playbook...
     $ ansible-playbook site.yaml -e @parameters.yaml
     [...]
      
-## Running a play
-A _player_ Pod (implemented in the [fragmentor] repository) uses a series of
-Ansible playbooks to: -
+## Running a fragmentor play
+the _player_ Pod (implemented in and released from the [fragmentor] repository)
+provides a series of Ansible playbooks for each stage of fragmentation: -
 
 -   **standardise**
 -   **fragment**
@@ -92,9 +92,9 @@ Ansible playbooks to: -
 -   **extract**
 -   **combine**
 
-All of these playbooks are available in the _player_ container that is
-executed in Kubernetes. What this repository's playbook does is launch
-the _player_ container (in a pre-existing Kubernetes **Namespace**)
+All of these playbooks are available in the _player_ container in Kubernetes,
+launched by this repo's playbook. What this repository's playbook does is
+launch the _player_ container (in a pre-existing Kubernetes **Namespace**)
 as a **Job**, mapping Ansible playbook parameters into the container prior
 to its execution. It sets an environment in the _player_ that is used to
 select the play that is run.
@@ -125,13 +125,16 @@ In this example we're running the **standardise** play: -
 
     $ ansible-playbook site-player.yaml -e fp_play=standardise
 
-As the plays can take a considerable time to run the `site-player`
+As individual plays can take a considerable time to run the `site-player`
 playbook does not wait for the result - you need to
 inspect the _player_ Pod yourself to check on the its progress.
 
+>   The player will prevent you from running another _play_ while
+    one still appears to be running.
+
 ## Cheat-sheet
-With a parameter like th following (xchem/dsip) you should be
-able to run the standard set of plays.
+With a parameter like the following (which expects to access our xchem/dsip
+data) you should be able to run the standard set of plays.
 
 ```yaml
 ---
@@ -192,7 +195,7 @@ hardware:
 -   **Combine** (multiple datasets to graph CSV)
 
 Using a slightly modified parameter file (shown below) you can then combine
-datasets.
+fragmented datasets.
 
 ```yaml
 ---
@@ -231,11 +234,12 @@ hardware:
 
 ## A convenient player query playbook
 If you don't have visual access to the cluster you can run
-the following playbook, which summarises the phase of the play.
+the following playbook, which summarises the phase of the currently executing
+play. It will tell you if the current play is still running.
 
     $ ansible-playbook site-player_query.yaml
     
-It finished with a summary message like this: -
+It finishes with a summary message like this: -
 
 ```
 TASK [player : Display query message] *****************************************
