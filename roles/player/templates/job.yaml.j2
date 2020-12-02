@@ -13,6 +13,11 @@ spec:
     spec:
       serviceAccountName: fragmentor
 
+      # The player is not running as root
+      # so we need to set the fsGroup to allow access to the EFS volume
+      securityContext:
+        fsGroup: {{ fp_player_uid }}
+
       # A 'request' (not guaranteed)
       # node selection affinity...
       affinity:
