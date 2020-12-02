@@ -136,8 +136,13 @@ inspect the _player_ Pod yourself to check on the its progress.
     one still appears to be running.
 
 ## Cheat-sheet
-With a parameter like the following (which expects to access our xchem/dsip
-data) you should be able to run the standard set of plays.
+With a `parameter.yaml` file like the following in your project directory
+(which expects to find xchem/dsip data in your bucket) you should be able to
+run a sequence of plays.
+
+>   The parameter filename is assumed - if you use a different
+    filename you will need to add `-e fp_parameter_file=myfile.yaml` to the
+    playbook examples below.
 
 >   You will need to provide the name of the AWS S3 bucket that you're
     using to store RAW vendor data and extracted results. Here we're using the
