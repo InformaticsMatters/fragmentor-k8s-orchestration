@@ -26,14 +26,17 @@ Before you attempt to execute any fragmentation plays...
 6.  The database service is expected to be exposed by a **Service**
     called `postgres`
 7.  Your cluster must contain nodes with the label
+    `informaticsmatters.com/purpose=core` as the database Pod will require
+    a node with this label during scheduling
+8.  Your cluster must contain nodes with the label
     `informaticsmatters.com/purpose=fragmentor`. The fragmentor (Nextflow)
     containers will only run on nodes that contain this label. Each fragmentor
     nodes must have at least 4 cores and 8Gi RAM.
-8.  You will need an AWS bucket that holds your vendor molecule data.
+9.  You will need an AWS bucket that holds your vendor molecule data.
     This bucket will also be used for the delivery of the extracted
     fragmentation/graph data.
-9.  You will need your Kubernetes config file.
-10. You will need AWS credentials (that allow for bucket access).
+10. You will need your Kubernetes config file.
+11. You will need AWS credentials (that allow for bucket access).
 
 ## Kubernetes namespace setup
 You can conveniently create the required namespace and database using our
@@ -136,10 +139,16 @@ inspect the _player_ Pod yourself to check on the its progress.
 With a parameter like the following (which expects to access our xchem/dsip
 data) you should be able to run the standard set of plays.
 
+>   You will need to provide the name of the AWS S3 bucket that you're
+    using to store RAW vendor data and extracted results. Here we're using the
+    bucket `im-fragnet` but (as these names are global you wil need to replace
+    it with the name of your bucket.
+
 ```yaml
 ---
 database_login_host: postgres
 deployment: production
+bucket: im-fragnet
 runpath: /work
 add_backup: no
 vendor: xchem_dsip
