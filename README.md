@@ -210,6 +210,7 @@ fragmented datasets.
 ---
 database_login_host: postgres
 deployment: production
+bucket: im-fragnet
 runpath: /work
 add_backup: no
 vendor: xchem_dsip
