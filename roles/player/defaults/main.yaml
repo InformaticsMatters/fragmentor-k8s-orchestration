@@ -31,7 +31,7 @@ fp_parameter_file: parameters.yaml
 # Details of the fragmentation player container image
 fp_image_registry: docker.io
 fp_image_name: informaticsmatters/fragmentor-player
-fp_image_tag: '1.0.0'
+fp_image_tag: '1.0.1'
 
 # All Image PUll Secret -------------------------------------------------------
 
@@ -39,5 +39,5 @@ fp_image_tag: '1.0.0'
 # If you need a pull secret to pull the images you must create it
 # in the fragmentor namespace and provide the name of it in this variable.
 #
-# This secret must apply to all images the fragmentor wil need.
+# This secret must apply to all images the fragmentor will need.
 all_image_preset_pullsecret_name: ''

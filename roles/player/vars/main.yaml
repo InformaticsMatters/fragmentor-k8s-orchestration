@@ -15,8 +15,8 @@ fp_cpu_limit: 2
 fp_mem_request: 4Gi
 fp_mem_limit: 4Gi
 
-# The player container user-ID
-fp_player_uid: 1000
+# The home directory in the fragmentor 'player' pod
+fp_player_home: /root
 
 # How long to hold-on to the player Pod
 # (keep alive for post-run debug)

@@ -13,11 +13,6 @@ spec:
     spec:
       serviceAccountName: fragmentor
 
-      # The player is not running as root
-      # so we need to set the fsGroup to allow access to the EFS volume
-      securityContext:
-        fsGroup: {{ fp_player_uid }}
-
       # A 'request' (not guaranteed)
       # node selection affinity...
       affinity:
@@ -92,13 +87,13 @@ spec:
         - name: work
           mountPath: /work
         - name: nextflow-config
-          mountPath: /home/fragmentor/.nextflow/config
+          mountPath: {{ fp_player_home }}/.nextflow/config
           subPath: config
         - name: parameters
-          mountPath: /home/fragmentor/parameters.yaml
+          mountPath: {{ fp_player_home }}/parameters.yaml
           subPath: parameters.yaml
         - name: kubeconfig
-          mountPath: /home/fragmentor/.kube/config
+          mountPath: {{ fp_player_home }}/.kube/config
           subPath: config
 
       volumes:
