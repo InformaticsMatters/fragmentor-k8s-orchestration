@@ -8,7 +8,7 @@ Ansible playbooks for the Kubernetes-based execution of [fragmentor]
 
 Before you attempt to execute any fragmentation plays...
 
-1.  You will need a Kubernetes cluster with ReadWriteMany storage class
+1.  You will need a Kubernetes cluster with a ReadWriteMany storage class
     (i.e. NFS or, if using AWS, EFS)
 2.  You will need a Kubernetes namespace that contains a pre-deployed postgres
     server, by default the namespace is expected to be called `fragmentor`.
@@ -31,7 +31,7 @@ Before you attempt to execute any fragmentation plays...
 8.  Your cluster must contain nodes with the label
     `informaticsmatters.com/purpose=fragmentor`. The fragmentor (Nextflow)
     containers will only run on nodes that contain this label. Each fragmentor
-    nodes must have at least 4 cores and 8Gi RAM.
+    node must have at least 4 cores and 8Gi RAM.
 9.  You will need an AWS bucket that holds your vendor molecule data.
     This bucket will also be used for the delivery of the extracted
     fragmentation/graph data.
