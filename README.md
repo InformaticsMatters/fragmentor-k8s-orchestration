@@ -75,6 +75,12 @@ pg_mem_request: 2Gi
 pg_mem_limit: 4Gi
 ```
 
+>   Your fragmentation stages may require additional postgres configuration
+    in order to function properly (which typically relates to working memory
+    and cores/processes). If this is so then you can provide an 'additional'
+    postgres configuration file and name this using the
+    playbook's `pg_extra_configuration_file` variable.
+
 You will need to set a few Kubernetes variables...
 
     $ export K8S_AUTH_HOST=https://example.com
