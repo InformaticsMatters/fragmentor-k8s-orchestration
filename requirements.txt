@@ -1,5 +1,4 @@
 ansible == 2.9.15
-boto3 == 1.16.18
 jmespath == 0.10.0
 kubernetes == 11.0.0
 openshift == 0.11.2

@@ -49,6 +49,7 @@ You can conveniently create the required namespace and database using our
 Start from the project root of a clone of the repository: -
 
     $ python -m venv ~/.venv/postgresql-ansible
+
     $ source ~/.venv/postgresql-ansible/bin/activate
     $ pip install --upgrade pip
     $ pip install -r requirements.txt
@@ -80,7 +81,7 @@ You will need to set a few Kubernetes variables...
     $ export K8S_AUTH_API_KEY=1234
     $ export K8S_AUTH_VERIFY_SSL=no
 
-Before running the playbook...
+Then run the playbook...
 
     $ ansible-playbook site.yaml -e @parameters.yaml
     [...]
@@ -108,6 +109,7 @@ To run a play you must set a set of play-specific parameters in the local file
 Start from a virtual environment: -
 
     $ python -m venv ~/.venv/fragmentor-ansible
+
     $ source ~/.venv/fragmentor-ansible/bin/activate
     $ pip install --upgrade pip
     $ pip install -r requirements.txt
@@ -120,13 +122,16 @@ As always, set a few key environment parameters: -
 
     $ export KUBECONFIG=~/.kube/config
 
+For access to AWS S3: -
+
     $ export AWS_ACCESS_KEY_ID=?????
     $ export AWS_SECRET_ACCESS_KEY=?????
 
 You _name_ the play to run using our playbook's `fp_play` variable.
-In this example we're running the **standardise** play: -
+In this example we're running the *database reset* play: -
 
-    $ ansible-playbook site-player.yaml -e fp_play=standardise
+    $ ansible-playbook site-player.yaml \
+        -e fp_play=db-server-configure_create-database
 
 As individual plays can take a considerable time to run the `site-player`
 playbook does not wait for the result - you need to
@@ -200,13 +205,13 @@ hardware:
     $ ansible-playbook site-player.yaml -e fp_play=inchi
 ```
 
--   **Extract** (a dataset to graph CSV)
+-   **Extract** (a dataset to graph CSV files)
 
 ```
     $ ansible-playbook site-player.yaml -e fp_play=extract
 ```
 
--   **Combine** (multiple datasets to graph CSV)
+-   **Combine** (multiple datasets into graph CSV files)
 
 Using a slightly modified parameter file (shown below) you can then combine
 fragmented datasets.
@@ -260,7 +265,7 @@ It finishes with a summary message like this: -
 TASK [player : Display query message] *****************************************
 Wednesday 18 November 2020  13:17:54 +0000 (0:00:00.049)       0:00:07.401 **** 
 ok: [localhost] => {
-    "msg": "The player is running"
+    "msg": "The 'standardise' play is running"
 }
 ```
     
