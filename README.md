@@ -1,6 +1,7 @@
 # fragmentor-ansible
 
-[![Build Status](https://travis-ci.com/InformaticsMatters/fragmentor-ansible.svg?branch=main)](https://travis-ci.com/InformaticsMatters/fragmentor-ansible)
+![lint](https://github.com/InformaticsMatters/fragmentor-ansible/workflows/lint/badge.svg)
+
 ![GitHub tag (latest SemVer)](https://img.shields.io/github/tag/informaticsmatters/fragmentor-ansible)
 
 Ansible playbooks for the Kubernetes-based execution of [fragmentor]

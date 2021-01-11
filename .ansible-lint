@@ -1,0 +1,8 @@
+---
+
+# Lint Ansible but exclude some forms of error: -
+
+skip_list:
+- '204'  # Lines should be no longer than 160 chars
+warn_list:
+- '207'  # Nested jinja pattern

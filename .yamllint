@@ -6,7 +6,9 @@ yaml-files:
 - '.yamllint'
 
 ignore: |
+  .github/
   roles/player/templates/job.yaml.j2
+  roles/player/templates/configmap-nextflow-config.yaml.j2
 
 rules:
   indentation:
