@@ -186,6 +186,15 @@
   set_fact:
     kubeconfig_fact: "{{ lookup('file', '{{ fp_kubeconfig_file }}') }}"
 
+- name: Create DockerHub image pull secret
+  k8s:
+    definition: "{{ lookup('template', 'secret-dh-imagepull.yaml.j2') }}"
+    wait: yes
+  vars:
+    pull_namespace: "{{ fp_namespace }}"
+    pull_secret: "{{ fp_dockerhub_pullsecret }}"
+  when: fp_dockerhub_pullsecret|string|length > 0
+
 - name: Create namespace material
   k8s:
     definition: "{{ lookup('template', '{{ item }}.yaml.j2') }}"
