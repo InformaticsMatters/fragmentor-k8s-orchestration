@@ -148,18 +148,27 @@
   - query_message is undefined
   - failed_pod is defined
 
-# Now print the summery message.
+# Now print the summery message
+# making sure we can deal with a failure to find anything.
 
-- name: Assert query message
-  assert:
-    that: query_message is defined
+- block:
 
-- name: Get playbook name
-  set_fact:
-    query_play: "{{ query_pod_result|json_query(query)|flatten }}"
-  vars:
-    query: "resources[0].spec.containers[0].env[?name=='FRAGMENTOR_PLAY'].value"
+  - name: Get playbook name
+    set_fact:
+      query_play: "{{ query_pod_result|json_query(query)|flatten }}"
+    vars:
+      query: "resources[0].spec.containers[0].env[?name=='FRAGMENTOR_PLAY'].value"
 
-- name: Display query message
-  debug:
-    msg: The '{{ query_play[0] }}' play {{ query_message }}
+  - name: Display query message
+    debug:
+      msg: The '{{ query_play[0] }}' play {{ query_message }}
+
+  when: query_message is defined
+
+- block:
+
+  - name: Nothing found
+    debug:
+      msg: Couldn't find evidence of activity
+
+  when: query_message is undefined
