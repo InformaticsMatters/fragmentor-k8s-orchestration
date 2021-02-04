@@ -1,0 +1,142 @@
+---
+
+# Wipes any prior play Pod (Succeeded or Failed)
+
+# Delete the player Pods left behind that are Completed ('Succeeded').
+# Kubernetes *DOES NOT* remove these Job-based Pods automatically
+# (see https://kubernetes.io/docs/concepts/workloads/controllers/job/).
+# Instead completed Jobs need to be removed manually by the user.
+# The logic that follows list all Jobs (Pods)
+# that have Succeeded and then deletes them.
+
+# Running...
+
+- name: Get Running Player Job Pods
+  k8s_info:
+    kind: Pod
+    namespace: "{{ fp_namespace }}"
+    label_selectors:
+    - name=fragmentor-player
+    field_selectors:
+    - status.phase=Running
+  register: pods_result
+
+- name: Delete Running Player Job Pods
+  k8s:
+    kind: Pod
+    namespace: "{{ fp_namespace }}"
+    name: "{{ item.metadata.name }}"
+    state: absent
+  loop: "{{ pods_result.resources }}"
+  no_log: yes
+  when: pods_result.resources|length > 0
+
+# Succeeded...
+
+- name: Get Succeeded Player Job Pods
+  k8s_info:
+    kind: Pod
+    namespace: "{{ fp_namespace }}"
+    label_selectors:
+    - name=fragmentor-player
+    field_selectors:
+    - status.phase=Succeeded
+  register: pods_result
+
+- name: Delete Succeeded Player Job Pods
+  k8s:
+    kind: Pod
+    namespace: "{{ fp_namespace }}"
+    name: "{{ item.metadata.name }}"
+    state: absent
+  loop: "{{ pods_result.resources }}"
+  no_log: yes
+  when: pods_result.resources|length > 0
+
+# Failed...
+
+- name: Get Failed Player Job Pods
+  k8s_info:
+    kind: Pod
+    namespace: "{{ fp_namespace }}"
+    label_selectors:
+    - name=fragmentor-player
+    field_selectors:
+    - status.phase=Failed
+  register: pods_result
+
+- name: Delete Failed Player Job Pods
+  k8s:
+    kind: Pod
+    namespace: "{{ fp_namespace }}"
+    name: "{{ item.metadata.name }}"
+    state: absent
+  loop: "{{ pods_result.resources }}"
+  no_log: yes
+  when: pods_result.resources|length > 0
+
+# Pending...
+
+- name: Check Pending Player Job Pods
+  k8s_info:
+    kind: Pod
+    namespace: "{{ fp_namespace }}"
+    label_selectors:
+    - name=fragmentor-player
+    field_selectors:
+    - status.phase=Pending
+  register: pods_result
+
+- name: Delete Pending Player Job Pods
+  k8s:
+    kind: Pod
+    namespace: "{{ fp_namespace }}"
+    name: "{{ item.metadata.name }}"
+    state: absent
+  loop: "{{ pods_result.resources }}"
+  no_log: yes
+  when: pods_result.resources|length > 0
+
+# Unknown...
+
+- name: Check Unknown Player Job Pods
+  k8s_info:
+    kind: Pod
+    namespace: "{{ fp_namespace }}"
+    label_selectors:
+    - name=fragmentor-player
+    field_selectors:
+    - status.phase=Unknown
+  register: pod_result
+
+- name: Delete Unknown Player Job Pods
+  k8s:
+    kind: Pod
+    namespace: "{{ fp_namespace }}"
+    name: "{{ item.metadata.name }}"
+    state: absent
+  loop: "{{ pods_result.resources }}"
+  no_log: yes
+  when: pods_result.resources|length > 0
+
+# Delete nextflow Pods that are Completed ('Succeeded').
+
+- name: Get Succeeded Nextflow Pods
+  k8s_info:
+    kind: Pod
+    namespace: "{{ fp_namespace }}"
+    label_selectors:
+    - app=nextflow
+    field_selectors:
+    - status.phase=Succeeded
+  register: pods_result
+
+- name: Delete Succeeded Nextflow Pods
+  k8s:
+    kind: Pod
+    namespace: "{{ fp_namespace }}"
+    name: "{{ item.metadata.name }}"
+    state: absent
+  loop: "{{ pods_result.resources }}"
+  no_log: yes
+  when: pods_result.resources|length > 0

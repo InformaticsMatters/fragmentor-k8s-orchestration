@@ -21,3 +21,5 @@
     state: absent
     wait: yes
     wait_timeout: "{{ pod_ready_timeout }}"
+
+- include_tasks: wipe-pods.yaml

@@ -103,74 +103,7 @@
     that: active_pods|length == 0
     fail_msg: A play is still running. You must wait.
 
-# Delete the player Pods left behind that are Completed ('Succeeded').
-# Kubernetes *DOES NOT* remove these Job-based Pods automatically
-# (see https://kubernetes.io/docs/concepts/workloads/controllers/job/).
-# Instead completed Jobs need to be removed manually by the user.
-# The logic that follows list all Jobs (Pods)
-# that have Succeeded and then deletes them.
-
-- name: Get Succeeded Job Pods
-  k8s_info:
-    kind: Pod
-    namespace: "{{ fp_namespace }}"
-    label_selectors:
-    - name=fragmentor-player
-    field_selectors:
-    - status.phase=Succeeded
-  register: pods_result
-
-- name: Delete Succeeded Job Pods
-  k8s:
-    kind: Pod
-    namespace: "{{ fp_namespace }}"
-    name: "{{ item.metadata.name }}"
-    state: absent
-  loop: "{{ pods_result.resources }}"
-  no_log: yes
-  when: pods_result.resources|length > 0
-
-- name: Get Failed Job Pods
-  k8s_info:
-    kind: Pod
-    namespace: "{{ fp_namespace }}"
-    label_selectors:
-    - name=fragmentor-player
-    field_selectors:
-    - status.phase=Failed
-  register: pods_result
-
-- name: Delete Failed Job Pods
-  k8s:
-    kind: Pod
-    namespace: "{{ fp_namespace }}"
-    name: "{{ item.metadata.name }}"
-    state: absent
-  loop: "{{ pods_result.resources }}"
-  no_log: yes
-  when: pods_result.resources|length > 0
-
-# Delete nextflow Pods that are Completed ('Succeeded').
-
-- name: Get Succeeded Nextflow Pods
-  k8s_info:
-    kind: Pod
-    namespace: "{{ fp_namespace }}"
-    label_selectors:
-    - app=nextflow
-    field_selectors:
-    - status.phase=Succeeded
-  register: pods_result
-
-- name: Delete Succeeded Nextflow Pods
-  k8s:
-    kind: Pod
-    namespace: "{{ fp_namespace }}"
-    name: "{{ item.metadata.name }}"
-    state: absent
-  loop: "{{ pods_result.resources }}"
-  no_log: yes
-  when: pods_result.resources|length > 0
+- include_tasks: wipe-pods.yaml
 
 # Create basic materials
 
