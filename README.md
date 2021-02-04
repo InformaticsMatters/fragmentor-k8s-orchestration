@@ -276,6 +276,12 @@ ok: [localhost] => {
 }
 ```
     
+## Killing the player (not recommended)
+If the player is failing, and you want to kill it, and the Job that
+launched it, you can run the kill-player playbook: -
+
+    $ ansible-playbook site-player_kill-player.yaml
+    
 ---
 
 [fragmentor]: https://github.com/InformaticsMatters/fragmentor

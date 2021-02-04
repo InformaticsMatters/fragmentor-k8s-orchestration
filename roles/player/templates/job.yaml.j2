@@ -53,6 +53,8 @@ spec:
           value: '{{ aws_access_key_id }}'
         - name: AWS_SECRET_ACCESS_KEY
           value: '{{ aws_secret_access_key }}'
+        - name: NXF_VER
+          value: '{{ fp_nextflow_version }}'
         # The number of seconds to 'sleep' keeping the Pod alive for inspection
         # once the Job is complete. Set to '0' to exit immediately.
         - name: KEEP_ALIVE_SECONDS

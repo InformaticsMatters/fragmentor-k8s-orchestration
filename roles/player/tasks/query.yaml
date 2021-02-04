@@ -169,6 +169,6 @@
 
   - name: Nothing found
     debug:
-      msg: Couldn't find evidence of activity
+      msg: Nothing appears to be deployed
 
   when: query_message is undefined

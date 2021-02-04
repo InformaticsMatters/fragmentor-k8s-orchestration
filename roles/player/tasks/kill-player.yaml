@@ -1,0 +1,23 @@
+---
+
+# A series of tasks that will terminate a running player.
+# User with caution because this does not clean up any
+# other Pods/Jobs that may be running - just the player.
+#
+# Use this if the play Pod itself s having trouble.
+
+- include_tasks: prep.yaml
+
+- name: Check destructive change
+  pause:
+    prompt: |-
+      Are you sure you want to terminate the Player?
+      This is destructive and cannot be undone.
+      Hit RETURN to continue or, to abort, press ctrl+c and then a.
+
+- name: Remove prior fragmentor Job
+  k8s:
+    definition: "{{ lookup('template', 'job.yaml.j2') }}"
+    state: absent
+    wait: yes
+    wait_timeout: "{{ pod_ready_timeout }}"
