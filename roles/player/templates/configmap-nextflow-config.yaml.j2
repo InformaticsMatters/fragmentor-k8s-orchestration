@@ -11,12 +11,15 @@ metadata:
 data:
   config: |
     process {
-      executor = 'k8s'
 {% if all_image_preset_pullsecret_name|string|length > 0 %}
       pod = [nodeSelector: 'informaticsmatters.com/purpose=fragmentor', imagePullSecret: '{{ all_image_preset_pullsecret_name }}']
 {% else %}
       pod = [nodeSelector: 'informaticsmatters.com/purpose=fragmentor']
 {% endif %}
+    }
+    executor {
+        name = 'k8s'
+        queueSize = {{ fp_nextflow_queue_size }}
     }
     k8s {
         serviceAccount = 'fragmentor'

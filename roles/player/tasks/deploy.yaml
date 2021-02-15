@@ -7,6 +7,13 @@
     that: fp_play|string != 'SetMe'
     fail_msg: You must set 'fp_play'
 
+# Assert nextflow parameters
+
+- name: Assert queue size
+  assert:
+    that: fp_nextflow_queue_size|int > 0
+    fail_msg: You must set a sensible 'fp_nextflow_queue_size'
+
 # Assert the Kubernetes config has been named and exists
 
 - name: Assert kubernetes configuration file named
