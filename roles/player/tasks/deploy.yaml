@@ -27,7 +27,7 @@
 
 - name: Stat kubernetes configuration file
   stat:
-    path: "{{ fp_kubeconfig_file}}"
+    path: "{{ fp_kubeconfig_file }}"
   register: stat_kubeconfig
 
 - name: Assert kubernetes configuration file looks sensible
