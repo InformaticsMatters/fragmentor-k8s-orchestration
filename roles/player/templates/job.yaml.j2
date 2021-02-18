@@ -33,7 +33,11 @@ spec:
 
       containers:
       - name: fragmentor-player
+{% if fp_image_registry %}
         image: {{ fp_image_registry }}/{{ fp_image_name }}:{{ fp_image_tag }}
+{% else %}
+        image: {{ fp_image_name }}:{{ fp_image_tag }}
+{% endif %}
 {% if fp_image_tag in ['latest', 'stable'] %}
         imagePullPolicy: Always
 {% else %}

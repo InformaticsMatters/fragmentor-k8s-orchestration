@@ -16,7 +16,7 @@
 
 # Assert the Kubernetes config has been named and exists
 
-- name: Assert kubernetes configuration file named
+- name: Assert kubernetes configuration file is named
   assert:
     that: fp_kubeconfig_file|string != 'SetMe'
     fail_msg: You must set 'fp_kubeconfig_file'
@@ -25,14 +25,19 @@
   debug:
     var: fp_kubeconfig_file
 
-- name: Check kubernetes configuration file
+- name: Stat kubernetes configuration file
   stat:
-    path: "{{ fp_kubeconfig_file }}"
-  register: file_result
+    path: "{{ fp_kubeconfig_file}}"
+  register: stat_kubeconfig
 
-- name: Assert kubernetes configuration file exists
+- name: Assert kubernetes configuration file looks sensible
   assert:
-    that: file_result.stat.exists
+    that:
+    - stat_kubeconfig.stat.exists
+    - stat_kubeconfig.stat.readable
+    - stat_kubeconfig.stat.size > 100
+    - stat_kubeconfig.stat.isreg
+    fail_msg: Are you sure '{{ fp_kubeconfig_file }}' is a Kubernetes config file?
 
 # Assert AWS credentials have been defined
 
