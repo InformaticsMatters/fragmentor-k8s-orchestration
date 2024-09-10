@@ -30,14 +30,14 @@ Before you attempt to execute any fragmentation plays...
     `informaticsmatters.com/purpose=core` as the database Pod will require
     a node with this label during scheduling
 8.  Your cluster must contain nodes with the label
-    `informaticsmatters.com/purpose=fragmentor`. The fragmentor (Nextflow)
-    containers will only run on nodes that contain this label. Each fragmentor
-    node must have at least 4 cores and 8Gi RAM.
-9.  You will need an AWS bucket that holds your vendor molecule data.
+    `informaticsmatters.com/purpose-fragmentor=yes`. The fragmentor player and Nextflow
+    containers will only run on nodes that contain this label.
+9.  Each fragmentor node must have at least 4 cores and 8Gi RAM.
+10. You will need an AWS/S3 bucket that holds your vendor molecule data.
     This bucket will also be used for the delivery of the extracted
     fragmentation/graph data.
-10. You will need your Kubernetes config file.
-11. You will need AWS credentials (that allow for bucket access).
+11. You will need your Kubernetes config file.
+12. You will need AWS credentials (that allow for bucket access).
 
 ## Kubernetes namespace setup
 You can conveniently create the required namespace and database using our

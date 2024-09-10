@@ -12,9 +12,9 @@ data:
   config: |
     process {
 {% if all_image_preset_pullsecret_name|string|length > 0 %}
-      pod = [nodeSelector: 'informaticsmatters.com/purpose=fragmentor', imagePullSecret: '{{ all_image_preset_pullsecret_name }}']
+      pod = [nodeSelector: 'informaticsmatters.com/purpose-fragmentor=yes', imagePullSecret: '{{ all_image_preset_pullsecret_name }}']
 {% else %}
-      pod = [nodeSelector: 'informaticsmatters.com/purpose=fragmentor']
+      pod = [nodeSelector: 'informaticsmatters.com/purpose-fragmentor=yes']
 {% endif %}
     }
     executor {

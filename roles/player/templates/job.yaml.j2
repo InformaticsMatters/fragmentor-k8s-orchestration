@@ -21,10 +21,8 @@ spec:
           - weight: 1
             preference:
               matchExpressions:
-              - key: informaticsmatters.com/purpose
-                operator: In
-                values:
-                - fragmentor
+              - key: informaticsmatters.com/purpose-fragmentor
+                operator: Exists
 
 {% if all_image_preset_pullsecret_name|string|length > 0 %}
       imagePullSecrets:
