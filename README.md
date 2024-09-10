@@ -15,7 +15,7 @@ Before you attempt to execute any fragmentation plays...
     server, by default the namespace is expected to be called `fragmentor`.
     You can use the Ansible playbook and role in our [postgresql-ansible]
     GitHub repository to create the namespace and install a PostgreSQL
-    database (See the **Kubernetes namespace setup** section below).    
+    database (See the **Kubernetes namespace setup** section below).
 3.  The database needs to be using a shareable (EFS/NFS) volume
     (`ReadWriteMany`) for use with **pgcopy** command data - and you'll need
     the name of the PVC. This is expected to be mounted into the database at
@@ -49,9 +49,9 @@ You can conveniently create the required namespace and database using our
 
 Start from the project root of a clone of the repository: -
 
-    $ python -m venv ~/.venv/postgresql-ansible
+    $ python -m venv venv
 
-    $ source ~/.venv/postgresql-ansible/bin/activate
+    $ source venv/bin/activate
     $ pip install --upgrade pip
     $ pip install -r requirements.txt
 
@@ -92,7 +92,7 @@ Then run the playbook...
 
     $ ansible-playbook site.yaml -e @parameters.yaml
     [...]
-     
+
 ## Running a fragmentor play
 the _player_ Pod (implemented in and released from the [fragmentor] repository)
 provides a series of Ansible playbooks for each stage of fragmentation: -
@@ -115,9 +115,9 @@ To run a play you must set a set of play-specific parameters in the local file
 
 Start from a virtual environment: -
 
-    $ python -m venv ~/.venv/fragmentor-ansible
+    $ python -m venv venv
 
-    $ source ~/.venv/fragmentor-ansible/bin/activate
+    $ source venv/bin/activate
     $ pip install --upgrade pip
     $ pip install -r requirements.txt
 
@@ -265,24 +265,24 @@ the following playbook, which summarises the phase of the currently executing
 play. It will tell you if the current play is still running.
 
     $ ansible-playbook site-player_query.yaml
-    
+
 It finishes with a summary message like this: -
 
 ```
 TASK [player : Display query message] *****************************************
-Wednesday 18 November 2020  13:17:54 +0000 (0:00:00.049)       0:00:07.401 **** 
+Wednesday 18 November 2020  13:17:54 +0000 (0:00:00.049)       0:00:07.401 ****
 ok: [localhost] => {
     "msg": "The 'standardise' play is running"
 }
 ```
-    
+
 ## Killing the player (not recommended)
 If the player is failing, and you want to kill it, and the Job that
 launched it, you can run the kill-player playbook: -
 
     $ ansible-playbook site-player_kill-player.yaml
-    
+
 ---
 
 [fragmentor]: https://github.com/InformaticsMatters/fragmentor
-[postgresql-ansible]: https://github.com/InformaticsMatters/postgresql-ansible 
+[postgresql-ansible]: https://github.com/InformaticsMatters/postgresql-ansible
