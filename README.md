@@ -135,10 +135,12 @@ For access to AWS S3: -
     $ export AWS_SECRET_ACCESS_KEY=?????
 
 You _name_ the play to run using our playbook's `fp_play` variable.
-In this example we're running the *database reset* play: -
+In this example we're running the *database reset* play and setting
+the storage class to `nfs`: -
 
     $ ansible-playbook site-player.yaml \
-        -e fp_play=db-server-configure_create-database
+        -e fp_play=db-server-configure_create-database \
+        -e fp_work_volume_storageclass=nfs
 
 As individual plays can take a considerable time to run the `site-player`
 playbook does not wait for the result - you need to
