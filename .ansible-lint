@@ -4,5 +4,9 @@
 
 skip_list:
 - '204'  # Lines should be no longer than 160 chars
+- name[template]
+- fqcn[action]
+- fqcn[action-core]
+- var-naming[no-role-prefix]
 warn_list:
 - '207'  # Nested jinja pattern

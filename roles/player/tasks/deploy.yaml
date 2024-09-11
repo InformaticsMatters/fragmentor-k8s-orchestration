@@ -98,7 +98,7 @@
 
 - name: Collect names of all player Job Pods not complete
   set_fact:
-    active_pods: "{{ pods_result|json_query('results[*].resources[*].metadata.name')|flatten }}"
+    active_pods: "{{ pods_result | json_query('results[*].resources[*].metadata.name') | flatten }}"
 
 - name: Display collected Pod results
   debug:
@@ -115,7 +115,8 @@
     that: active_pods|length == 0
     fail_msg: A play is still running. You must wait.
 
-- include_tasks: wipe-pods.yaml
+- name: Wipe Pods
+  include_tasks: wipe-pods.yaml
 
 # Create basic materials
 

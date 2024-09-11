@@ -3,7 +3,8 @@
 # Common playbook preparation.
 
 # Expose ansible version
-- debug:
+- name: Display ansible version
+  debug:
     var: ansible_version.full
 
 # Expose all the installed Python modules...

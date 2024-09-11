@@ -6,7 +6,8 @@
 #
 # Use this if the play Pod itself s having trouble.
 
-- include_tasks: prep.yaml
+- name: Include prep.yaml
+  include_tasks: prep.yaml
 
 - name: Check destructive change
   pause:
@@ -22,4 +23,5 @@
     wait: yes
     wait_timeout: "{{ pod_ready_timeout }}"
 
-- include_tasks: wipe-pods.yaml
+- name: Wipe Pods
+  include_tasks: wipe-pods.yaml

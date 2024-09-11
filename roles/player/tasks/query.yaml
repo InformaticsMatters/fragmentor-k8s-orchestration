@@ -28,7 +28,7 @@
 
 - name: Collect name of Running player Job Pods
   set_fact:
-    running_pod: "{{ pod_result|json_query('resources[0].metadata.name') }}"
+    running_pod: "{{ pod_result | json_query('resources[0].metadata.name') }}"
   when:
   - query_message is undefined
   - pod_result.resources|length > 0
@@ -56,7 +56,7 @@
 
 - name: Collect name of Succeeded player Job Pods
   set_fact:
-    finished_pod: "{{ pod_result|json_query('resources[0].metadata.name') }}"
+    finished_pod: "{{ pod_result | json_query('resources[0].metadata.name') }}"
   when:
   - query_message is undefined
   - pod_result.resources|length > 0
@@ -84,7 +84,7 @@
 
 - name: Collect name of Failed player Job Pods
   set_fact:
-    failed_pod: "{{ pod_result|json_query('resources[0].metadata.name') }}"
+    failed_pod: "{{ pod_result | json_query('resources[0].metadata.name') }}"
   when:
   - query_message is undefined
   - pod_result.resources|length > 0
@@ -111,7 +111,7 @@
 
 - name: Collect name of Pending player Job Pods
   set_fact:
-    pending_pod: "{{ pod_result|json_query('resources[0].metadata.name') }}"
+    pending_pod: "{{ pod_result | json_query('resources[0].metadata.name') }}"
   when: pod_result.resources|length > 0
 
 - name: Set Pending facts
@@ -135,7 +135,7 @@
 
 - name: Collect name of Unknown player Job Pods
   set_fact:
-    unkown_pod: "{{ pod_result|json_query('resources[0].metadata.name') }}"
+    unkown_pod: "{{ pod_result | json_query('resources[0].metadata.name') }}"
   when:
   - query_message is undefined
   - pod_result.resources|length > 0
@@ -151,11 +151,13 @@
 # Now print the summery message
 # making sure we can deal with a failure to find anything.
 
-- block:
+- name: Display query message
+  when: query_message is defined
+  block:
 
   - name: Get playbook name
     set_fact:
-      query_play: "{{ query_pod_result|json_query(query)|flatten }}"
+      query_play: "{{ query_pod_result | json_query(query) | flatten }}"
     vars:
       query: "resources[0].spec.containers[0].env[?name=='FRAGMENTOR_PLAY'].value"
 
@@ -163,12 +165,10 @@
     debug:
       msg: The '{{ query_play[0] }}' play {{ query_message }}
 
-  when: query_message is defined
-
-- block:
+- name: Debug
+  when: query_message is undefined
+  block:
 
   - name: Nothing found
     debug:
       msg: Nothing appears to be deployed
-
-  when: query_message is undefined

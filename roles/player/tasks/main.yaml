@@ -1,6 +1,7 @@
 ---
 
-- include_tasks: prep.yaml
+- name: Include prep
+  include_tasks: prep.yaml
 
 # A kubernetes host and an API key must be set.
 # Either environment variables wil have been set by the user
@@ -18,11 +19,12 @@
 # There is no 'undeploy' fragmentation is a 'Job'
 # so there's (normally) nothing to delete.
 
-- block:
-
-  - include_tasks: deploy.yaml
-
+- name: Deploy
   module_defaults:
     group/k8s:
       host: "{{ k8s_auth_host }}"
       api_key: "{{ k8s_auth_api_key }}"
+  block:
+
+  - name: Include deploy
+    include_tasks: deploy.yaml

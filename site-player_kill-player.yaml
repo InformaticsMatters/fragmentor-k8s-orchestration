@@ -1,6 +1,8 @@
 ---
-- hosts: localhost
+- name: Localhost
+  hosts: localhost
   tasks:
-  - include_role:
+  - name: Include player kill-player
+    include_role:
       name: player
       tasks_from: kill-player.yaml

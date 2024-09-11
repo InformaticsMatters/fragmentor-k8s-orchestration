@@ -1,5 +1,7 @@
 ---
-- hosts: localhost
+- name: Localhost
+  hosts: localhost
   tasks:
-  - include_role:
+  - name: Include player
+    include_role:
       name: player
