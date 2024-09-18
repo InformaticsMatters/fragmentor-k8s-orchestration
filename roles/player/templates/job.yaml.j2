@@ -36,11 +36,7 @@ spec:
 {% else %}
         image: {{ fp_image_name }}:{{ fp_image_tag }}
 {% endif %}
-{% if fp_image_tag in ['latest', 'stable'] %}
         imagePullPolicy: Always
-{% else %}
-        imagePullPolicy: IfNotPresent
-{% endif %}
         # The default termination log (here for clarity)
         # But also fallback to stdout logs on error
         # if there is no termination log.
