@@ -8,8 +8,8 @@
 fp_play: SetMe
 
 # The user's kubernetes configuration file.
-# The user must set KUBECONFIG - we do not assume ~/.kube/config
-fp_kubeconfig_file: "{{ lookup('env', 'KUBECONFIG') }}"
+# The user must define this variable - we no-longer rely on KUBECONFIG.
+fp_kubeconfig_file: SetMe
 
 # The namespace that is expected to exist.
 fp_namespace: fragmentor
