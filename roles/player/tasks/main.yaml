@@ -24,6 +24,28 @@
     - fp_kubeconfig_file|length > 0
     - fp_kubeconfig_file!='SetMe'
 
+# Discover the hostname (an IP address) of the kubernetes cluster
+# control plane. We do this to set a host alias in the Player Pod
+# to avoid the need for a DNS lookup (something that may be unreliable on
+# the chosen cluster)
+
+- name: Run kubectl (to get the host)
+  command: kubectl config view --minify --output 'jsonpath={.clusters[0].cluster.server}'
+  register: k8s_host
+  changed_when: false
+
+- name: Extract k8s hostname
+  set_fact:
+    k8s_hostname: "{{ k8s_host.stdout_lines[0] | urlsplit('hostname') }}"
+
+- name: Use Python's 'dig' to get the IP address
+  set_fact:
+    k8s_ip: "{{ lookup('dig', k8s_hostname) }}"
+
+- name: Display k8s hostname and address
+  debug:
+    msg: k8s_hostname={{ k8s_hostname }} k8s_ip={{ k8s_ip }}
+
 # Go...
 
 # There is no 'undeploy' fragmentation is a 'Job'

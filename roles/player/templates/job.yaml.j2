@@ -11,6 +11,14 @@ spec:
       labels:
         name: fragmentor-player
     spec:
+      # A host alias for the Kubernetes API.
+      # This ensures the host (and th IP address we provide)
+      # go into the Pod's /etc/hosts file.
+      hostAliases:
+      - ip: "{{ k8s_ip }}"
+        hostnames:
+        - "{{ k8s_hostname }}""
+
       serviceAccountName: fragmentor
 
       # A 'request' (not guaranteed)
