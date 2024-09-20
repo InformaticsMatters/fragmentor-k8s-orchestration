@@ -3,6 +3,10 @@
 - name: Include prep
   include_tasks: prep.yaml
 
+- name: Load parameters from {{ fp_parameter_file }}
+  include_vars:
+    file: "{{ fp_parameter_file }}"
+
 # A kubernetes host and an API key must be set.
 # Either environment variables wil have been set by the user
 # or AWX 'kubernetes' credentials will have injected them.
