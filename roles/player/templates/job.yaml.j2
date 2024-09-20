@@ -11,14 +11,6 @@ spec:
       labels:
         name: fragmentor-player
     spec:
-      # A host alias for the Kubernetes API.
-      # This ensures the host (and th IP address we provide)
-      # go into the Pod's /etc/hosts file.
-      hostAliases:
-      - ip: "{{ k8s_ip }}"
-        hostnames:
-        - "{{ k8s_hostname }}""
-
       serviceAccountName: fragmentor
 
       # A 'request' (not guaranteed)
@@ -31,6 +23,13 @@ spec:
               matchExpressions:
               - key: informaticsmatters.com/purpose-fragmentor
                 operator: Exists
+      # A host alias for the Kubernetes API.
+      # This ensures the host (and th IP address we provide)
+      # go into the Pod's /etc/hosts file and permit bypassing of DNS.
+      hostAliases:
+      - ip: "{{ k8s_ip }}"
+        hostnames:
+        - "{{ k8s_hostname }}"
 
 {% if all_image_preset_pullsecret_name|string|length > 0 %}
       imagePullSecrets:
