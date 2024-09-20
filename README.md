@@ -179,8 +179,7 @@ extracts:
     regenerate_index: yes
 hardware:
   production:
-    parallel_jobs: 8
-    cluster_cores: 8
+    parallel_jobs: 360
     sort_memory: 4GB
     postgres_jobs: 8
 ```
