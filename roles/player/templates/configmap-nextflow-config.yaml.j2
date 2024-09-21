@@ -11,15 +11,17 @@ metadata:
 data:
   config: |
     process {
+      pod = [
+        nodeSelector: 'informaticsmatters.com/purpose-fragmentor=yes',
 {% if all_image_preset_pullsecret_name|string|length > 0 %}
-      pod = [nodeSelector: 'informaticsmatters.com/purpose-fragmentor=yes', imagePullSecret: '{{ all_image_preset_pullsecret_name }}']
-{% else %}
-      pod = [nodeSelector: 'informaticsmatters.com/purpose-fragmentor=yes']
+        imagePullSecret: '{{ all_image_preset_pullsecret_name }}',
 {% endif %}
+        imagePullPolicy: '{{ fp_nextflow_pod_image_pull_policy }}'
+      ]
     }
     executor {
         name = 'k8s'
-        queueSize = {{ fp_nextflow_queue_size }}
+        queueSize = {{ fp_nextflow_executor_queue_size }}
     }
     k8s {
         serviceAccount = 'fragmentor'

@@ -1,4 +1,5 @@
 ansible == 8.7.0
+dnspython == 2.6.1
 jmespath == 1.0.1
 kubernetes == 23.6.0
 openshift == 0.13.2

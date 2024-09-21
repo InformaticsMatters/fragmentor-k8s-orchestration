@@ -7,6 +7,13 @@
 Ansible playbooks for the Kubernetes-based execution of [fragmentor]
 **Playbooks**.
 
+This repository's `site-player` play launches a _player_ Pod in Kubernetes your
+Kubernetes cluster. The player Pod can run each stage of our fragmentation process.
+The player understands how to run the `standardise`, `fragment`, `inchi`, and `extract`
+playbooks (in our [fragmentor] repository) by _injecting_ your parameter, kubeconfig
+and nextflow files into the player, which then runs the fragmentor playbook
+you name.
+
 Before you attempt to execute any fragmentation plays...
 
 1.  You will need a Kubernetes cluster with a ReadWriteMany storage class
@@ -38,6 +45,9 @@ Before you attempt to execute any fragmentation plays...
     fragmentation/graph data.
 11. You will need your Kubernetes config file.
 12. You will need AWS credentials (that allow for bucket access).
+13. You will need to be able to run `kubectl` from the command-line
+    as the player expects to use it to obtain the cluster host and its IP.
+    So ensure that `KUBECONFIG` is set appropriately.
 
 ## Kubernetes namespace setup
 You can conveniently create the required namespace and database using our
@@ -49,11 +59,11 @@ You can conveniently create the required namespace and database using our
 
 Start from the project root of a clone of the repository: -
 
-    $ python -m venv venv
+    python -m venv venv
 
-    $ source venv/bin/activate
-    $ pip install --upgrade pip
-    $ pip install -r requirements.txt
+    source venv/bin/activate
+    pip install --upgrade pip
+    pip install -r requirements.txt
 
 ...and create the database and corresponding namespace using an Ansible
 YAML-based parameter file. Here's an example that should work for 'small'
@@ -84,13 +94,13 @@ pg_mem_limit: 4Gi
 
 You will need to set a few Kubernetes variables...
 
-    $ export K8S_AUTH_HOST=https://example.com
-    $ export K8S_AUTH_API_KEY=1234
-    $ export K8S_AUTH_VERIFY_SSL=no
+    export K8S_AUTH_HOST=https://example.com
+    export K8S_AUTH_API_KEY=1234
+    export K8S_AUTH_VERIFY_SSL=no
 
 Then run the playbook...
 
-    $ ansible-playbook site.yaml -e @parameters.yaml
+    ansible-playbook site.yaml -e @parameters.yaml
     [...]
 
 ## Running a fragmentor play
@@ -115,30 +125,30 @@ To run a play you must set a set of play-specific parameters in the local file
 
 Start from a virtual environment: -
 
-    $ python -m venv venv
+    python -m venv venv
 
-    $ source venv/bin/activate
-    $ pip install --upgrade pip
-    $ pip install -r requirements.txt
+    source venv/bin/activate
+    pip install --upgrade pip
+    pip install -r requirements.txt
 
 As always, set a few key environment parameters: -
 
-    $ export K8S_AUTH_HOST=https://example.com
-    $ export K8S_AUTH_API_KEY=?????
-    $ export K8S_AUTH_VERIFY_SSL=no
+    export K8S_AUTH_HOST=https://example.com
+    export K8S_AUTH_API_KEY=?????
+    export K8S_AUTH_VERIFY_SSL=no
 
-    $ export KUBECONFIG=~/.kube/config
+    export KUBECONFIG=~/.kube/config
 
 For access to AWS S3: -
 
-    $ export AWS_ACCESS_KEY_ID=?????
-    $ export AWS_SECRET_ACCESS_KEY=?????
+    export AWS_ACCESS_KEY_ID=?????
+    export AWS_SECRET_ACCESS_KEY=?????
 
 You _name_ the play to run using our playbook's `fp_play` variable.
 In this example we're running the *database reset* play and setting
 the storage class to `nfs`: -
 
-    $ ansible-playbook site-player.yaml \
+    ansible-playbook site-player.yaml \
         -e fp_play=db-server-configure_create-database \
         -e fp_work_volume_storageclass=nfs
 
@@ -179,8 +189,7 @@ extracts:
     regenerate_index: yes
 hardware:
   production:
-    parallel_jobs: 8
-    cluster_cores: 8
+    parallel_jobs: 360
     sort_memory: 4GB
     postgres_jobs: 8
 ```
@@ -192,32 +201,32 @@ hardware:
     with key records.
 
 ```
-    $ ansible-playbook site-player.yaml \
+    ansible-playbook site-player.yaml \
         -e fp_play=db-server-configure_create-database
 ```
 
 -   **Standardise**
 
 ```
-    $ ansible-playbook site-player.yaml -e fp_play=standardise
+    ansible-playbook site-player.yaml -e fp_play=standardise
 ```
 
 -   **Fragment**
 
 ```
-    $ ansible-playbook site-player.yaml -e fp_play=fragment
+    ansible-playbook site-player.yaml -e fp_play=fragment
 ```
 
 -   **InChi**
 
 ```
-    $ ansible-playbook site-player.yaml -e fp_play=inchi
+    ansible-playbook site-player.yaml -e fp_play=inchi
 ```
 
 -   **Extract** (a dataset to graph CSV files)
 
 ```
-    $ ansible-playbook site-player.yaml -e fp_play=extract
+    ansible-playbook site-player.yaml -e fp_play=extract
 ```
 
 -   **Combine** (multiple datasets into graph CSV files)
@@ -258,7 +267,7 @@ hardware:
 ```
 
 ```
-    $ ansible-playbook site-player.yaml -e fp_play=combine
+    ansible-playbook site-player.yaml -e fp_play=combine
 ```
 
 ## A convenient player query playbook
@@ -266,7 +275,7 @@ If you don't have visual access to the cluster you can run
 the following playbook, which summarises the phase of the currently executing
 play. It will tell you if the current play is still running.
 
-    $ ansible-playbook site-player_query.yaml
+    ansible-playbook site-player_query.yaml
 
 It finishes with a summary message like this: -
 
@@ -282,7 +291,7 @@ ok: [localhost] => {
 If the player is failing, and you want to kill it, and the Job that
 launched it, you can run the kill-player playbook: -
 
-    $ ansible-playbook site-player_kill-player.yaml
+    ansible-playbook site-player_kill-player.yaml
 
 ---
 

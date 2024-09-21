@@ -8,8 +8,8 @@
 fp_play: SetMe
 
 # The user's kubernetes configuration file.
-# The user must set KUBECONFIG - we do not assume ~/.kube/config
-fp_kubeconfig_file: "{{ lookup('env', 'KUBECONFIG') }}"
+# The user must define this variable - we no-longer rely on KUBECONFIG.
+fp_kubeconfig_file: SetMe
 
 # The namespace that is expected to exist.
 fp_namespace: fragmentor
@@ -31,7 +31,7 @@ fp_parameter_file: parameters.yaml
 # Details of the fragmentation player container image
 fp_image_registry: ''
 fp_image_name: informaticsmatters/fragmentor-player
-fp_image_tag: '1.1.0'
+fp_image_tag: '1.2.0'
 
 # The nextflow version to run.
 # The player image generally contains the 'latest' nextflow version.
@@ -46,8 +46,10 @@ fp_image_tag: '1.1.0'
 #
 # See https://github.com/nextflow-io/nextflow/issues/1902
 fp_nextflow_version: '21.02.0-edge'
-# And the Nextflow queue size
-fp_nextflow_queue_size: 100
+# And the Nextflow executor queue size
+fp_nextflow_executor_queue_size: 100
+# And Pod pull policy
+fp_nextflow_pod_image_pull_policy: 'IfNotPresent'
 
 # A pull-secret for public images pulled from DockerHub.
 # If set this is the base-64 string that can be used as the value

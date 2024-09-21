@@ -11,8 +11,8 @@
 
 - name: Assert queue size
   assert:
-    that: fp_nextflow_queue_size|int > 0
-    fail_msg: You must set a sensible 'fp_nextflow_queue_size'
+    that: fp_nextflow_executor_queue_size|int > 0
+    fail_msg: You must set a sensible 'fp_nextflow_executor_queue_size'
 
 # Assert the Kubernetes config has been named and exists
 

@@ -18,8 +18,10 @@ fp_mem_limit: 4Gi
 # The home directory in the fragmentor 'player' pod
 fp_player_home: /root
 
-# How long to hold-on to the player Pod
-# (keep alive for post-run debug)
+# How long to hold-on to the player Pod.
+# If set the player Pod remains running for th defined period.
+# This gives you an opportunity to shell int to the Pod and inspect
+# the execution, essentially an ability to look around when the play has finished.
 fp_keep_alive_seconds: 0
 
 # General variables
