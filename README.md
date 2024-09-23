@@ -139,10 +139,13 @@ As always, set a few key environment parameters: -
 
     export KUBECONFIG=~/.kube/config
 
-For access to AWS S3: -
+For access to AWS S3 you will need to provide the following, with the
+`AWS_ENDPOINT_URL` required for non-AWS buckets: -
 
     export AWS_ACCESS_KEY_ID=?????
     export AWS_SECRET_ACCESS_KEY=?????
+    export AWS_DEFAULT_REGION=????
+    export AWS_ENDPOINT_URL=????
 
 You _name_ the play to run using our playbook's `fp_play` variable.
 In this example we're running the *database reset* play and setting
@@ -156,8 +159,8 @@ As individual plays can take a considerable time to run the `site-player`
 playbook does not wait for the result - you need to
 inspect the _player_ Pod yourself to check on the its progress.
 
->   The player will prevent you from running another _play_ while
-    one still appears to be running.
+>   The player playbooks here will prevent you from running another _play_ while
+    one is running.
 
 ## Cheat-sheet
 With a `parameter.yaml` file like the following in your project directory
@@ -190,8 +193,6 @@ extracts:
 hardware:
   production:
     parallel_jobs: 360
-    sort_memory: 4GB
-    postgres_jobs: 8
 ```
 
 -   **Reset fragmentation database**
@@ -260,10 +261,7 @@ path_out: xchem_combi_alan_20201117
 data_source_out: s3
 hardware:
   production:
-    parallel_jobs: 8
-    cluster_cores: 8
-    sort_memory: 4GB
-    postgres_jobs: 8
+    parallel_jobs: 360
 ```
 
 ```
