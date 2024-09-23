@@ -244,21 +244,29 @@ runpath: /work
 add_backup: no
 vendor: xchem_dsip
 version: v1
-extracts:
+combine:
 - lib:
     path: extract/xchem_dsip/v1
     data_source: s3
-    bucket: im-fragnet
-    aws_access_key: ?????
-    aws_secret_key: ?????
+    s3_bucket: im-fragnet
+    s3_access_key: ?????
+    s3_secret_key: ?????
+    s3_region: ????
+    s3_url: ????
 - lib:
     path: extract/xchem_spot/v1
     data_source: s3
-    bucket: im-fragnet
-    aws_access_key: ?????
-    aws_secret_key: ?????
+    s3_bucket: im-fragnet
+    s3_access_key: ?????
+    s3_secret_key: ?????
+    s3_region: ????
+    s3_url: ????
+output_destination: s3
 path_out: xchem_combi_alan_20201117
-data_source_out: s3
+s3_out_access_key: ?????
+s3_out_secret_key: ?????
+s3_out_region: ?????
+s3_out_url: ?????
 hardware:
   production:
     parallel_jobs: 360
