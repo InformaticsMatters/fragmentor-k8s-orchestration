@@ -73,6 +73,47 @@
     that: pvc_result.resources|length == 1
     fail_msg: The pgcopy pvc ({{ fp_pgcopy_pvc_name }}) does not exist
 
+# Create basic materials
+
+# The parameter file is read into a variable here.
+# 'file' replaces new-line instances by '\n' so to
+# reproduce the original content, with line-feeds we '|replace('\n', '\\n')'
+
+- name: Set parameters from file ({{ fp_parameter_file }})
+  set_fact:
+    parameters_fact: "{{ lookup('file', '{{ fp_parameter_file }}') }}"
+
+- name: Display parameter file
+  debug:
+    var: fp_parameter_file
+
+- name: Display parameter file content
+  debug:
+    var: parameters_fact.splitlines()
+
+- name: Set kubeconfig from file ({{ fp_kubeconfig_file }})
+  set_fact:
+    kubeconfig_fact: "{{ lookup('file', '{{ fp_kubeconfig_file }}') }}"
+
+- name: Display kubeconfig filename
+  debug:
+    var: fp_kubeconfig_file
+
+- name: Display player image
+  debug:
+    msg: Player image is {{ fp_image_registry }}/{{ fp_image_name }}:{{ fp_image_tag }}
+
+# An 'Are you sure Prompt'...
+
+- name: Are you sure you want to continue?
+  pause:
+    prompt: "Are you sure you want to run this '{{ fp_play }}' play? Type 'yes' to continue"
+  register: continue_response
+
+- assert:
+    that: continue_response.user_input == 'yes'
+    fail_msg: "You didn't type 'yes'. Phew, that was close!"
+
 # Not allowed to run a new 'play' if one is currently running.
 #
 # See https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/
@@ -118,19 +159,7 @@
 - name: Wipe Pods
   include_tasks: wipe-pods.yaml
 
-# Create basic materials
-
-# The parameter file is read into a variable here.
-# 'file' replaces new-line instances by '\n' so to
-# reproduce the original content, with line-feeds we '|replace('\n', '\\n')'
-
-- name: Set parameters from file ({{ fp_parameter_file }})
-  set_fact:
-    parameters_fact: "{{ lookup('file', '{{ fp_parameter_file }}') }}"
-
-- name: Set kubeconfig from file ({{ fp_kubeconfig_file }})
-  set_fact:
-    kubeconfig_fact: "{{ lookup('file', '{{ fp_kubeconfig_file }}') }}"
+# Go...
 
 - name: Create DockerHub image pull secret
   k8s:
