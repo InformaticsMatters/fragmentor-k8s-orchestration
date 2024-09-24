@@ -29,7 +29,7 @@ fp_work_volume_size_g: 1
 fp_parameter_file: parameters.yaml
 
 # Details of the fragmentation player container image
-fp_image_registry: ''
+fp_image_registry: docker.io
 fp_image_name: informaticsmatters/fragmentor-player
 fp_image_tag: '1.2.1'
 
