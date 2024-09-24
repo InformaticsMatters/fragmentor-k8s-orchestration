@@ -155,12 +155,24 @@ the storage class to `nfs`: -
         -e fp_play=db-server-configure_create-database \
         -e fp_work_volume_storageclass=nfs
 
+After displaying the contents of the parameter file, the `KUBECONFIG` file and the
+player container image details each play will ask you to confirm that you want to run
+the play before anything destructive happens.
+
 As individual plays can take a considerable time to run the `site-player`
 playbook does not wait for the result - you need to
 inspect the _player_ Pod yourself to check on the its progress.
 
 >   The player playbooks here will prevent you from running another _play_ while
     one is running.
+
+## Exposed parameter file content
+Please be aware that when you rub a playbook the parameter file you provide to control
+the play (fragment, extract, etc.) will be exposed in the Ansible output log here and
+injected into the _player_ container using a Kubernetes `ConfigMap`.
+Consequently, any 'sensitive' information that you put in a parameter file
+will be visible in the local log and to anyone who has access the the Kubernetes
+**fragmentor** `Namespace` used to run the plays.
 
 ## Cheat-sheet
 With a `parameter.yaml` file like the following in your project directory
