@@ -7,13 +7,19 @@
 Ansible playbooks for the Kubernetes-based execution of [fragmentor]
 **Playbooks**.
 
-This repository's `site-player` play launches a _player_ Pod in Kubernetes your
-Kubernetes cluster. The player Pod can run each stage of our fragmentation process.
-The player understands how to run the `standardise`, `fragment`, `inchi`, and `extract`
-playbooks (in our [fragmentor] repository) by _injecting_ your parameter, kubeconfig
-and nextflow files into the player, which then runs the fragmentor playbook
-you name.
+![orchestration](docs/images/fragmentor-ansible-topology.001.png)
 
+This repository's `site-player` play launches a Kubernetes **Pod** (based on the [fragmentor]
+repository's _player_ image). It uses **ConfigMaps** to _inject_ a Nextflow configuration
+file, a copy of your chosen `KUBECONFIG` file, and a copy of the play's `parameters.yaml`.
+The _player_ **Pod** is also attached to a **PersistentVolumeClaim** for data
+processing and the `/pgcopy` volume that is shared with your configured database.
+
+The `fragmentor-player` image (built from the [fragmentor] repository) contains all the
+playbooks and code from the [fragmentor] repository so that it can orchestrate any play
+authored in that repository: `standardise`, `fragment`, `inchi`, `extract`, and `combine`.
+
+## Prerequisites
 Before you attempt to execute any fragmentation plays...
 
 1.  You will need a Kubernetes cluster with a ReadWriteMany storage class
