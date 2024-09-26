@@ -1,11 +1,13 @@
-# fragmentor-ansible
+# fragmentor-k8s-orchestration
 
-![lint](https://github.com/InformaticsMatters/fragmentor-ansible/workflows/lint/badge.svg)
+![lint](https://github.com/InformaticsMatters/fragmentor-k8s-orchestration/workflows/lint/badge.svg)
 
-![GitHub tag (latest SemVer)](https://img.shields.io/github/tag/informaticsmatters/fragmentor-ansible)
+![GitHub tag (latest SemVer)](https://img.shields.io/github/tag/informaticsmatters/fragmentor-k8s-orchestration)
 
 Ansible playbooks for the Kubernetes-based execution of [fragmentor]
-**Playbooks**.
+**Playbooks** (formally the `fragmentor-ansible` repository).
+
+---
 
 ![orchestration](docs/images/fragmentor-ansible-topology.001.png)
 
