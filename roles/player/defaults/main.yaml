@@ -31,7 +31,7 @@ fp_parameter_file: parameters.yaml
 # Details of the fragmentation player container image
 fp_image_registry: docker.io
 fp_image_name: informaticsmatters/fragmentor-player
-fp_image_tag: '1.2.1'
+fp_image_tag: '1.3.1'
 
 # The nextflow version to run.
 # The player image generally contains the 'latest' nextflow version.
