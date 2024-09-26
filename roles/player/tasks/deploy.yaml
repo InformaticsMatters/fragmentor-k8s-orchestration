@@ -103,6 +103,10 @@
   debug:
     msg: Player image is {{ fp_image_registry }}/{{ fp_image_name }}:{{ fp_image_tag }}
 
+- name: Display play name
+  debug:
+    var: fp_play
+
 # An 'Are you sure Prompt'...
 
 - name: Are you sure you want to continue?
