@@ -111,6 +111,49 @@ Then run the playbook...
     ansible-playbook site.yaml -e @parameters.yaml
     [...]
 
+## Using a custom work volume
+If you need to setup a custom PVC (which has to be **ReadWriteMany**) you can set one
+up, and if it's called `work` the playbooks will use it rather than deploy their own.
+Here's an example PV and PVC for a custom NFS work volume: -
+
+```yaml
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: fragmentor-work
+spec:
+  capacity:
+    storage: 4Ti
+  volumeMode: Filesystem
+  claimRef:
+    name: work
+    namespace: fragmentor
+  accessModes:
+  - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    path: /nfs/kubernetes-fragmentor/work
+    server: 130.246.213.182
+```
+
+```yaml
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: work
+  namespace: fragmentor
+spec:
+  storageClassName: ""
+  volumeName: fragmentor-work
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 4Ti
+```
+
 ## Running a fragmentor play
 the _player_ Pod (implemented in and released from the [fragmentor] repository)
 provides a series of Ansible playbooks for each stage of fragmentation: -
