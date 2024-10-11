@@ -151,7 +151,7 @@
     var: pods_result
   when: active_pods|length > 0
 
-- name: Display incomplete player Job Pod nmaes
+- name: Display incomplete player Job Pod names
   debug:
     var: active_pods
   when: active_pods|length > 0
@@ -188,27 +188,41 @@
   - configmap-parameters
   - configmap-kubeconfig
 
-# Check storage class exists
-# and create the volume claim
+# If a work PVC already exists do not try and create one.
+# This allows for a user-created volume to be used.
 
-- name: Get {{ fp_work_volume_storageclass }} StorageClass
+- name: Get work PVC
   k8s_info:
-    kind: StorageClass
-    name: "{{ fp_work_volume_storageclass }}"
-  register: sc_result
-  when: fp_work_volume_storageclass != " "
+    kind: PersistentVolumeClaim
+    name: work
+    namespace: "{{ fp_namespace }}"
+  register: work_pvc_result
 
-- name: Assert {{ fp_work_volume_storageclass }} StorageClass
-  assert:
-    that: sc_result.resources|length == 1
-    fail_msg: The {{ fp_work_volume_storageclass }} StorageClass must be available on the cluster
-  when: fp_work_volume_storageclass != " "
+- name: Create work PVC (if it does not exist)
+  when: work_pvc_result.resources | length == 0
+  block:
 
-- name: Create work-directory volume claim
-  k8s:
-    definition: "{{ lookup('template', 'pvc.yaml.j2') }}"
-    wait: yes
-    wait_timeout: "{{ wait_timeout }}"
+  # Check storage class exists for the work volume
+  # and create the volume claim
+
+  - name: Get {{ fp_work_volume_storageclass }} StorageClass
+    k8s_info:
+      kind: StorageClass
+      name: "{{ fp_work_volume_storageclass }}"
+    register: sc_result
+    when: fp_work_volume_storageclass != " "
+
+  - name: Assert {{ fp_work_volume_storageclass }} StorageClass
+    assert:
+      that: sc_result.resources|length == 1
+      fail_msg: The {{ fp_work_volume_storageclass }} StorageClass must be available on the cluster
+    when: fp_work_volume_storageclass != " "
+
+  - name: Create work-directory volume claim
+    k8s:
+      definition: "{{ lookup('template', 'pvc.yaml.j2') }}"
+      wait: yes
+      wait_timeout: "{{ wait_timeout }}"
 
 # Deploy the application...
 
