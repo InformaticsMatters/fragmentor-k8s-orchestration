@@ -15,14 +15,20 @@
 - name: Assert authentication
   assert:
     that:
-    - k8s_auth_host|length > 0
-    - k8s_auth_api_key|length > 0
+    - k8s_auth_host | length > 0
+    - k8s_auth_api_key | length > 0
 
 - name: Assert kubeconfig file is named
   assert:
     that:
-    - fp_kubeconfig_file|length > 0
-    - fp_kubeconfig_file!='SetMe'
+    - fp_kubeconfig_file | length > 0
+    - fp_kubeconfig_file != 'SetMe'
+
+- name: Assert player image tag is named
+  assert:
+    that:
+    - fp_image_tag | length > 0
+    - fp_image_tag != 'SetMe'
 
 # Discover the hostname (an IP address) of the kubernetes cluster
 # control plane. We do this to set a host alias in the Player Pod
