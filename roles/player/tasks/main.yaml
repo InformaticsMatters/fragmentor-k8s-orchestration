@@ -40,13 +40,19 @@
   register: k8s_host
   changed_when: false
 
-- name: Extract k8s hostname
+- name: Extract k8s hostname (or IP address)
   set_fact:
     k8s_hostname: "{{ k8s_host.stdout_lines[0] | urlsplit('hostname') }}"
 
-- name: Use Python's 'dig' to get the IP address
+- name: Use hostname as IP address (if hostname is an IP address)
+  set_fact:
+    k8s_ip: "{{ k8s_hostname }}"
+  when: k8s_hostname is ansible.utils.ipv4
+
+- name: Use Python's 'dig' to get the IP address (if hostname is not an IP address)
   set_fact:
     k8s_ip: "{{ lookup('dig', k8s_hostname) }}"
+  when: k8s_hostname is not ansible.utils.ipv4
 
 - name: Display k8s hostname and address
   debug:

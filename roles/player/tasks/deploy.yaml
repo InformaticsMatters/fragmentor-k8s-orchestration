@@ -226,6 +226,10 @@
 
 # Deploy the application...
 
+- name: Display the host hostname and IP address
+  debug:
+    msg: "k8s_hostname={{ k8s_hostname }} k8s_ip={{ k8s_ip }}"
+
 - name: Remove prior fragmentor Job
   k8s:
     definition: "{{ lookup('template', 'job.yaml.j2') }}"
