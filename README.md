@@ -346,13 +346,22 @@ play. It will tell you if the current play is still running.
 
     ansible-playbook site-player_query.yaml
 
-It finishes with a summary message like this: -
+It finishes with a summary message like this when a play is still running: -
 
 ```
 TASK [player : Display query message] *****************************************
 Wednesday 18 November 2020  13:17:54 +0000 (0:00:00.049)       0:00:07.401 ****
 ok: [localhost] => {
     "msg": "The 'standardise' play is running"
+}
+```
+
+...and something like this when a play has finished successfully: -
+
+```
+TASK [player : Display query message] ************************************************************************************
+ok: [localhost] => {
+    "msg": "The 'db-server-configure_create-database' play has finished (SUCCESSFULLY)"
 }
 ```
 
