@@ -51,9 +51,13 @@ Before you attempt to execute any fragmentation plays...
 10. You will need an AWS/S3 bucket that holds your vendor molecule data.
     This bucket will also be used for the delivery of the extracted
     fragmentation/graph data.
-11. You will need your Kubernetes config file.
-12. You will need AWS credentials (that allow for bucket access).
-13. You will need to be able to run `kubectl` from the command-line
+11. You will need a Kubernetes cluster whose version matches the fragmentor `player` image.
+    At the time of writing this was Kubernetes 1.31 but check the
+    fragmentor's `Dockerfile-player` where the kubectl that's installed
+    is defined in the build-time argument `KUBECTL_VERSION`.
+12. You will need your Kubernetes config file.
+13. You will need AWS credentials (that allow for bucket access).
+14. You will need to be able to run `kubectl` from the command-line
     as the player expects to use it to obtain the cluster host and its IP.
     So ensure that `KUBECONFIG` is set appropriately.
 
