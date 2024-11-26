@@ -51,6 +51,14 @@ fp_nextflow_executor_queue_size: 100
 # And Pod pull policy
 fp_nextflow_pod_image_pull_policy: 'IfNotPresent'
 
+# Some advanced nextflow parameters (available in 22.10.0)
+# The client request HTTP connection timeout e.g. '60s'
+fp_nextflow_http_connect_timeout: ''
+# The client request HTTP connection read timeout e.g. '60s'
+fp_nextflow_http_read_timeout: ''
+# The API max request retries (default: 4)
+fp_nextflow_max_error_retry: ''
+
 # A pull-secret for public images pulled from DockerHub.
 # If set this is the base-64 string that can be used as the value
 # in our Kubernetes Secret as the .dockerconfigjson value.

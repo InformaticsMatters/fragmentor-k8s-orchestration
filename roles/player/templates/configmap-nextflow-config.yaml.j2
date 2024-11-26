@@ -24,6 +24,15 @@ data:
         queueSize = {{ fp_nextflow_executor_queue_size }}
     }
     k8s {
+{% if fp_nextflow_http_connect_timeout %}
+        httpConnectTimeout = '{{ fp_nextflow_http_connect_timeout }}'
+{% endif %}
+{% if fp_nextflow_http_read_timeout %}
+        httpReadTimeout = '{{ fp_nextflow_http_read_timeout }}'
+{% endif %}
+{% if fp_nextflow_max_error_retry %}
+        maxErrorRetry = '{{ fp_nextflow_max_error_retry }}'
+{% endif %}
         serviceAccount = 'fragmentor'
         storageClaimName = 'work'
         storageMountPath = '/work'
