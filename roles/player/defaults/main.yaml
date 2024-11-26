@@ -45,19 +45,19 @@ fp_image_tag: SetMe
 # seen when running in AWS EKS clusters.
 #
 # See https://github.com/nextflow-io/nextflow/issues/1902
-fp_nextflow_version: '21.02.0-edge'
+fp_nextflow_version: '22.10.8'
 # And the Nextflow executor queue size
 fp_nextflow_executor_queue_size: 100
 # And Pod pull policy
 fp_nextflow_pod_image_pull_policy: 'IfNotPresent'
 
-# Some advanced nextflow parameters (available in 22.10.0)
-# The client request HTTP connection timeout e.g. '60s'
+# A block of advanced nextflow kubernetes parameters (available in 22.10.0)
+# The client request HTTP connection timeout e.g. '120s'
 fp_nextflow_http_connect_timeout: ''
-# The client request HTTP connection read timeout e.g. '60s'
+# The client request HTTP connection read timeout e.g. '120s'
 fp_nextflow_http_read_timeout: ''
-# The API max request retries (default: 4)
-fp_nextflow_max_error_retry: ''
+# The API max request retries (nextflow defaults to 4)
+fp_nextflow_max_error_retry: 0
 
 # A pull-secret for public images pulled from DockerHub.
 # If set this is the base-64 string that can be used as the value
