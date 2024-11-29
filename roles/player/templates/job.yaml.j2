@@ -52,6 +52,10 @@ spec:
         env:
         - name: FRAGMENTOR_PLAY
           value: '{{ fp_play }}'
+{% if fp_play_extra_args %}
+        - name: FRAGMENTOR_PLAY_EXTRA_ARGS
+          value: '{{ fp_play_extra_args }}'
+{% endif %}
         - name: FRAGMENTOR_NAMESPACE
           value: '{{ fp_namespace }}'
         - name: AWS_ACCESS_KEY_ID

@@ -4,8 +4,12 @@
 # everything we expect the user to consider changing.
 # To avoid clutter, put less-common variables in 'vars/main.yaml'
 
-# The player's playbook to run.
+# The player's playbook to run,
+# passed to the 'play' Pod via FRAGMENTOR_PLAY
 fp_play: SetMe
+# Extra ansible-playbook arguments,
+# passed to the 'play' Pod via FRAGMENTOR_PLAY_EXTRA_ARGS
+fp_play_extra_args: ''
 
 # The user's kubernetes configuration file.
 # The user must define this variable - we no-longer rely on KUBECONFIG.
