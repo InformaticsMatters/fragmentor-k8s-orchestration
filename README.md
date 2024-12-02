@@ -221,6 +221,37 @@ inspect the _player_ Pod yourself to check on the its progress.
 >   The player playbooks here will prevent you from running another _play_ while
     one is running.
 
+## Playbook tags
+Some playbooks introduce `tags`. For example the **fragment** playbook
+uses the `fragmentation` tag to cover the tasks that actually perform the
+fragmentation, and `load_edges` and `load_nodes` for the logic that loads that data
+into the database. This is used to allow you to skip certain playbook logic
+should you need to re-run a play.
+
+You can *skip* tagged logic using the `fp_play_skip_tags` variable.
+So, to skip fragmentation logic you could add the following to your parameter file: -
+
+```yaml
+fp_play_skip_tags: fragmentation
+```
+
+The supplied tags are a comma-separated list of tags (without spaces), so this
+will skip loading nodes and edges: -
+
+```yaml
+fp_play_skip_tags: load_nodes,load_edges
+```
+
+You can display the tags supported by a playbook by adding the `--list-tags` option
+to the `fp_play_extra_args` variable in your parameter file: -
+
+```yaml
+fp_play_extra_args: --list-tags
+```
+
+Doing this will run the playbook to display the tags. The playbook will not run
+id you add this argument so you can use it to safely check a play's tags.
+
 ## Exposed parameter file content
 Please be aware that when you rub a playbook the parameter file you provide to control
 the play (fragment, extract, etc.) will be exposed in the Ansible output log here and
