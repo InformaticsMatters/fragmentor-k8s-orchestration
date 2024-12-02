@@ -56,6 +56,10 @@ spec:
         - name: FRAGMENTOR_PLAY_EXTRA_ARGS
           value: '{{ fp_play_extra_args }}'
 {% endif %}
+{% if fp_play_skip_tags %}
+        - name: FRAGMENTOR_PLAY_SKIP_TAGS
+          value: '{{ fp_play_skip_tags }}'
+{% endif %}
         - name: FRAGMENTOR_NAMESPACE
           value: '{{ fp_namespace }}'
         - name: AWS_ACCESS_KEY_ID

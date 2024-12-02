@@ -10,6 +10,14 @@ fp_play: SetMe
 # Extra ansible-playbook arguments,
 # passed to the 'play' Pod via FRAGMENTOR_PLAY_EXTRA_ARGS
 fp_play_extra_args: ''
+# An optional comma-separated list of tags to skip in the playbook.
+# For example: -
+#   fp_play_skip_tags: 'fragmentation,load_nodes'
+# If set the player adds the chosen tags to FRAGMENTOR_PLAY_SKIP_TAGS,
+# which is picked up by the player Pod's entrypoint script and used
+# to set the `--skip-tags` Ansible playbook argument.
+# A feature added in fragmentor 3.2.0.
+fp_play_skip_tags: ''
 
 # The user's kubernetes configuration file.
 # The user must define this variable - we no-longer rely on KUBECONFIG.
