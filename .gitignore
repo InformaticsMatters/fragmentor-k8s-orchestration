@@ -3,3 +3,4 @@ venv/
 
 parameters*.yaml
 vault-pass.txt
+kustomization/config
