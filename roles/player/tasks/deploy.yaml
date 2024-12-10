@@ -14,31 +14,6 @@
     that: fp_nextflow_executor_queue_size|int > 0
     fail_msg: You must set a sensible 'fp_nextflow_executor_queue_size'
 
-# Assert the Kubernetes config has been named and exists
-
-- name: Assert kubernetes configuration file is named
-  assert:
-    that: fp_kubeconfig_file|string != 'SetMe'
-    fail_msg: You must set 'fp_kubeconfig_file'
-
-- name: Display kubernetes configuration file name
-  debug:
-    var: fp_kubeconfig_file
-
-- name: Stat kubernetes configuration file
-  stat:
-    path: "{{ fp_kubeconfig_file }}"
-  register: stat_kubeconfig
-
-- name: Assert kubernetes configuration file looks sensible
-  assert:
-    that:
-    - stat_kubeconfig.stat.exists
-    - stat_kubeconfig.stat.readable
-    - stat_kubeconfig.stat.size > 100
-    - stat_kubeconfig.stat.isreg
-    fail_msg: Are you sure '{{ fp_kubeconfig_file }}' is a Kubernetes config file?
-
 # Assert AWS credentials have been defined
 
 - name: Assert AWS variables have been set named
@@ -48,7 +23,7 @@
     - aws_secret_access_key|string|length > 0
     fail_msg: You must provide AWS credentials
 
-# Check the namespace and pgcopy PVCs exist
+# Check the Namespace, kubeconfig ConfigMap, and pgcopy PVCs exist
 
 - name: Get namespace ({{ fp_namespace }})
   k8s_info:
@@ -60,6 +35,18 @@
   assert:
     that: ns_result.resources|length == 1
     fail_msg: The {{ fp_namespace }} namespace does not exist
+
+- name: Get kubeconfig ConfigMap
+  k8s_info:
+    kind: ConfigMap
+    namespace: "{{ fp_namespace }}"
+    name: kubeconfig
+  register: cm_result
+
+- name: Assert kubeconfig ConfigMap exists
+  assert:
+    that: cm_result.resources|length == 1
+    fail_msg: The kubeconfig ConfigMap does not exist
 
 - name: Get pgcopy pvc ({{ fp_pgcopy_pvc_name }})
   k8s_info:
@@ -90,14 +77,6 @@
 - name: Display parameter file content
   debug:
     var: parameters_fact.splitlines()
-
-- name: Set kubeconfig from file ({{ fp_kubeconfig_file }})
-  set_fact:
-    kubeconfig_fact: "{{ lookup('file', '{{ fp_kubeconfig_file }}') }}"
-
-- name: Display kubeconfig filename
-  debug:
-    var: fp_kubeconfig_file
 
 - name: Display player image
   debug:
@@ -186,7 +165,6 @@
   - limitrange
   - configmap-nextflow-config
   - configmap-parameters
-  - configmap-kubeconfig
 
 # If a work PVC already exists do not try and create one.
 # This allows for a user-created volume to be used.

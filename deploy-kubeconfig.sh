@@ -24,4 +24,6 @@ select yn in "Yes" "No"; do
 done
 
 echo "Deploying..."
-# kubectl apply -k kustomization
+kubectl apply -k kustomization
+
+rm ./kustomization/config

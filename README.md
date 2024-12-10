@@ -61,7 +61,7 @@ Before you attempt to execute any fragmentation plays...
     as the player expects to use it to obtain the cluster host and its IP.
     So ensure that `KUBECONFIG` is set appropriately.
 
-## Kubernetes namespace setup
+## Namespace database setup
 You can conveniently create the required namespace and database using our
 [postgresql-ansible] Ansible playbooks.
 
@@ -114,6 +114,30 @@ Then run the playbook...
 
     ansible-playbook site.yaml -e @parameters.yaml
     [...]
+
+## The kubeconfig ConfigMap
+The player is configured to map the cluster's `KUBECONFIG` file into the nextflow
+Pods created by the various playbooks. To do this you must create a **ConfigMap** in
+the `fragmentor` namespace created in the step above.
+
+This is done using `Kustomize` and the convenient bash script that copies your
+chosen `KUBECONFIG` file into the project's `kustomization` directory
+prior to running the kustomize command.
+
+Set your KUBECONFIG environment variable and then run the command: -
+
+    export KUBECONFIG=~/k8s-config/config-fragmentor
+    ./deploy-kubeconfig.sh
+
+You are shown the resulting **ConfigMap** YAML before being asked to continue.
+
+>   If you encounter a warning about missing the
+    kubectl.kubernetes.io/last-applied-configuration you most likely had a **ConfigMap**
+    deployed already and you can probably safely ignore this, but check the content
+    of the corresponding **Namespace** object, just to be safe.
+    The warning is issued because it's probably the first copy of the resource
+    and there is no annotation kustomize can use to figure out what to patch and change
+    with the exiting object.
 
 ## Using a custom work volume
 If you need to setup a custom PVC (which has to be **ReadWriteMany**) you can set one
@@ -221,7 +245,7 @@ inspect the _player_ Pod yourself to check on the its progress.
 >   The player playbooks here will prevent you from running another _play_ while
     one is running.
 
-## Playbook tags
+## Playbook tags (experimental)
 Some playbooks introduce `tags`. For example the **fragment** playbook
 uses the `fragmentation` tag to cover the tasks that actually perform the
 fragmentation, and `load_edges` and `load_nodes` for the logic that loads that data

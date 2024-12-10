@@ -19,10 +19,6 @@ fp_play_extra_args: ''
 # A feature added in fragmentor 3.2.0.
 fp_play_skip_tags: ''
 
-# The user's kubernetes configuration file.
-# The user must define this variable - we no-longer rely on KUBECONFIG.
-fp_kubeconfig_file: SetMe
-
 # The namespace that is expected to exist.
 fp_namespace: fragmentor
 
