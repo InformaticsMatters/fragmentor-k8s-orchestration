@@ -17,6 +17,7 @@ fp_play_extra_args: ''
 # which is picked up by the player Pod's entrypoint script and used
 # to set the `--skip-tags` Ansible playbook argument.
 # A feature added in fragmentor 3.2.0.
+# Individual playbooks may not 'clean up' if 'skip tags' is used.
 fp_play_skip_tags: ''
 
 # The namespace that is expected to exist.
