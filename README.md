@@ -190,7 +190,7 @@ provides a series of Ansible playbooks for each stage of fragmentation: -
 -   **fragment**
 -   **inchi**
 -   **extract**
--   **combine**
+-   **combine-simple**
 
 All of these playbooks are available in the _player_ container in Kubernetes,
 launched by this repo's playbook. What this repository's playbook does is
@@ -352,20 +352,17 @@ hardware:
     ansible-playbook site-player.yaml -e fp_play=extract
 ```
 
--   **Combine** (multiple datasets into graph CSV files)
+-   **Combine (Simple)** (multiple datasets into graph CSV files)
 
 Using a slightly modified parameter file (shown below) you can then combine
 fragmented datasets.
 
 ```yaml
 ---
-database_login_host: postgres
 deployment: production
 bucket: im-fragnet
 runpath: /work
 add_backup: no
-vendor: xchem_dsip
-version: v1
 combine:
 - lib:
     path: extract/xchem_dsip/v1
@@ -389,13 +386,10 @@ s3_out_access_key: ?????
 s3_out_secret_key: ?????
 s3_out_region: ?????
 s3_out_url: ?????
-hardware:
-  production:
-    parallel_jobs: 360
 ```
 
 ```
-    ansible-playbook site-player.yaml -e fp_play=combine
+    ansible-playbook site-player.yaml -e fp_play=combine-simple
 ```
 
 ## A convenient player query playbook
